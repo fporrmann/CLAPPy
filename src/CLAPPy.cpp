@@ -126,8 +126,18 @@ PYBIND11_MODULE(MODULE_NAME, m)
 		.value("VB_ERROR", clap::logging::Verbosity::VB_ERROR)
 		.value("VB_NONE", clap::logging::Verbosity::VB_NONE);
 
+	py::enum_<clap::AxiGPIO::DualChannel>(axiGPIO, "DualChannel")
+		.value("Yes", clap::AxiGPIO::DualChannel::Yes)
+		.value("No", clap::AxiGPIO::DualChannel::No);
+
+	py::enum_<clap::AxiGPIO::ResetOnInit>(axiGPIO, "ResetOnInit")
+		.value("Yes", clap::AxiGPIO::ResetOnInit::Yes)
+		.value("No", clap::AxiGPIO::ResetOnInit::No);
+
 	axiGPIO
-		.def(py::init<const clap::CLAPPtr &, const uint64_t &, const bool &>(), py::arg("clap"), py::arg("ctrlOffset"), py::arg("dualChannel") = false)
+		.def(py::init<const clap::CLAPPtr &, const uint64_t &, const clap::AxiGPIO::DualChannel &, const clap::AxiGPIO::ResetOnInit &>(), py::arg("clap"), py::arg("ctrlOffset"),
+		     py::arg("dualChannel") = clap::AxiGPIO::DualChannel::No, py::arg("resetOnInit") = clap::AxiGPIO::ResetOnInit::Yes)
+		.def(py::init<const clap::CLAPPtr &, const uint64_t &, const clap::AxiGPIO::ResetOnInit &>(), py::arg("clap"), py::arg("ctrlOffset"), py::arg("resetOnInit") = clap::AxiGPIO::ResetOnInit::Yes)
 		.def("Reset", &clap::AxiGPIO::Reset)
 		.def("SetDualChannel", &clap::AxiGPIO::SetDualChannel, py::arg("dualChannel"))
 		.def("SetGPIOWidth", &clap::AxiGPIO::SetGPIOWidth, py::arg("channel"), py::arg("width"))
