@@ -1,6 +1,3 @@
-#import sys
-#sys.path.append('build')
-
 import random
 from CLAPPy import CLAP
 

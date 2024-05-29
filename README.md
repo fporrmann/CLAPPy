@@ -1,7 +1,7 @@
 # CLAPPy
 Python bindings for [CLAP](https://github.com/fporrmann/CLAP)
 
-**This package is currently still under development and only PCIe and PetaLinux have been partially tested. The Baremetal implementation is still under development.**
+**This package is currently still under development and only PCIe and PetaLinux have been partially tested.**
 
 ## Requirements
 - Python >= 3.7
@@ -31,7 +31,3 @@ To create a PCIe object use:
 To create a PetaLinux object use:
 
 	CLAPPy.CLAP.CreatePetaLinux()
-
-To create a Baremetal object use:
-
-	CLAPPy.CLAP.CreateBareMetal()

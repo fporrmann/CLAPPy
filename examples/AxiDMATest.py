@@ -1,6 +1,3 @@
-import sys
-sys.path.append('build')
-
 from random import randint
 from CLAPPy import CLAP
 from CLAPPy import AxiDMA

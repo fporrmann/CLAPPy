@@ -256,8 +256,7 @@ PYBIND11_MODULE(MODULE_NAME, m)
 		.def("Read64", py::overload_cast<const uint64_t &>(&clap::CLAP::Read64), py::arg("addr"))
 		//////////////////////////////////////
 		.def_static("CreatePCIe", &clap::CLAP::Create<clap::backends::PCIeBackend>, py::arg("deviceNum") = 0, py::arg("channelNum") = 0)
-		.def_static("CreatePetaLinux", &clap::CLAP::Create<clap::backends::PetaLinuxBackend>, py::arg("deviceNum") = 0, py::arg("channelNum") = 0)
-		.def_static("CreateBareMetal", &clap::CLAP::Create<clap::backends::BareMetalBackend>, py::arg("deviceNum") = 0, py::arg("channelNum") = 0);
+		.def_static("CreatePetaLinux", &clap::CLAP::Create<clap::backends::PetaLinuxBackend>, py::arg("deviceNum") = 0, py::arg("channelNum") = 0);
 
 	clap.def_static("SetVerbosity", &clap::logging::SetVerbosity, py::arg("verbosity") = clap::logging::Verbosity::VB_INFO);
 	clap.def_static("SetWatchDogPollSleepTimeMS", &clap::SetWatchDogPollSleepTimeMS, py::arg("timeMS") = 10);
