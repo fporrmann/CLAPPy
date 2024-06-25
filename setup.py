@@ -8,7 +8,7 @@ from pathlib import Path
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 __module_name__ = "CLAPPy"
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
@@ -50,6 +50,7 @@ class CMakeBuild(build_ext):
             f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}{os.sep}",
             f"-DPYTHON_EXECUTABLE={sys.executable}",
             f"-DCMAKE_BUILD_TYPE={cfg}",  # not used on MSVC, but no harm
+			f"-DCLAPPY_VERSION={__version__}"
         ]
         build_args = []
         # Adding CMake arguments set as environment variable

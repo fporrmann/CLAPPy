@@ -278,8 +278,8 @@ PYBIND11_MODULE(MODULE_NAME, m)
 	defRWTemplate<int32_t>(clap, true);
 	defRWTemplate<int64_t>(clap, true);
 
-#ifdef CLAP_VERSION
-	m.attr("__version__") = MACRO_STRINGIFY(CLAP_VERSION);
+#ifdef CLAPPY_VERSION
+	m.attr("__version__") = MACRO_STRINGIFY(CLAPPY_VERSION);
 #else
 	m.attr("__version__") = "dev";
 #endif

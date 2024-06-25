@@ -30,7 +30,11 @@ find_package(CLAP PATHS ${clap_SOURCE_DIR}/API/cmake/modules REQUIRED)
 include_directories(${CLAP_INCLUDE_DIRS})
 
 add_definitions(-DMODULE_NAME=${PROJECT_NAME})
-add_definitions(-DCLAP_VERSION=${CLAP_VERSION})
+
+# If CLAPPY_VERSION is defined add it as a preprocessor definition
+if(DEFINED CLAPPY_VERSION)
+	add_definitions(-DCLAPPY_VERSION=${CLAPPY_VERSION})
+endif()
 
 pybind11_add_module(${PROJECT_NAME} src/CLAPPy.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CLAP_LIBS})
