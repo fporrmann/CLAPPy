@@ -33,6 +33,10 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include <array>
+#include <cstdint>
+#include <string>
+
 namespace py = pybind11;
 
 #define STRINGIFY(x)       #x
@@ -136,12 +140,14 @@ PYBIND11_MODULE(MODULE_NAME, m)
 
 	axiGPIO
 		.def(py::init<const clap::CLAPPtr &, const uint64_t &, const clap::AxiGPIO::DualChannel &, const clap::AxiGPIO::ResetOnInit &>(), py::arg("clap"), py::arg("ctrlOffset"),
-		     py::arg("dualChannel") = clap::AxiGPIO::DualChannel::No, py::arg("resetOnInit") = clap::AxiGPIO::ResetOnInit::Yes)
+			 py::arg("dualChannel") = clap::AxiGPIO::DualChannel::No, py::arg("resetOnInit") = clap::AxiGPIO::ResetOnInit::Yes)
 		.def(py::init<const clap::CLAPPtr &, const uint64_t &, const clap::AxiGPIO::ResetOnInit &>(), py::arg("clap"), py::arg("ctrlOffset"), py::arg("resetOnInit") = clap::AxiGPIO::ResetOnInit::Yes)
 		.def("Reset", &clap::AxiGPIO::Reset)
 		.def("SetDualChannel", &clap::AxiGPIO::SetDualChannel, py::arg("dualChannel"))
 		.def("SetGPIOWidth", &clap::AxiGPIO::SetGPIOWidth, py::arg("channel"), py::arg("width"))
+		.def("SetGPIOWidths", &clap::AxiGPIO::SetGPIOWidths, py::arg("widths"))
 		.def("SetTriStateDefaultValue", &clap::AxiGPIO::SetTriStateDefaultValue, py::arg("channel"), py::arg("value"))
+		.def("SetTriStateDefaultValues", &clap::AxiGPIO::SetTriStateDefaultValues, py::arg("values"))
 		.def("EnableInterrupts", &clap::AxiGPIO::EnableInterrupts, py::arg("channel"), py::arg("intr") = clap::AxiGPIO::GPIOInterrupts::INTR_ALL)
 		.def("UseInterruptController", &clap::AxiGPIO::UseInterruptController, py::arg("axiIntC"))
 		.def("RegisterInterruptCallback", &clap::AxiGPIO::RegisterInterruptCallback, py::arg("callback"))
@@ -150,7 +156,6 @@ PYBIND11_MODULE(MODULE_NAME, m)
 		.def("SetGPIOState", &clap::AxiGPIO::SetGPIOState, py::arg("channel"), py::arg("port"), py::arg("state"))
 		.def("GetGPIOBit", &clap::AxiGPIO::GetGPIOBit, py::arg("channel"), py::arg("port"))
 		.def("SetGPIOBit", &clap::AxiGPIO::SetGPIOBit, py::arg("channel"), py::arg("port"), py::arg("value"));
-
 	vdma
 		.def(py::init<const clap::CLAPPtr &, const uint64_t &>(), py::arg("clap"), py::arg("ctrlOffset"))
 		.def("Start", py::overload_cast<const uint64_t &, const uint32_t &, const uint32_t &, const uint64_t &, const uint32_t &, const uint32_t &>(&clap::VDMA<uint64_t>::Start), py::arg("srcAddr"), py::arg("srcHSize"), py::arg("srcVSize"), py::arg("dstAddr"), py::arg("dstHSize") = 0, py::arg("dstVSize") = 0)
@@ -206,7 +211,9 @@ PYBIND11_MODULE(MODULE_NAME, m)
 		.def("DisableInterrupts", py::overload_cast<const DMAChannel &, const clap::AxiDMA<uint64_t>::DMAInterrupts &>(&clap::AxiDMA<uint64_t>::DisableInterrupts), py::arg("channel"), py::arg("intr") = clap::AxiDMA<uint64_t>::DMAInterrupts::INTR_ALL)
 		.def("SetBufferLengthRegWidth", &clap::AxiDMA<uint64_t>::SetBufferLengthRegWidth, py::arg("width"))
 		.def("SetDataWidth", py::overload_cast<const uint32_t &, const DMAChannel &>(&clap::AxiDMA<uint64_t>::SetDataWidth), py::arg("width"), py::arg("channel") = DMAChannel::MM2S)
+		.def("SetDataWidth", py::overload_cast<const std::array<uint32_t, 2> &>(&clap::AxiDMA<uint64_t>::SetDataWidth), py::arg("widths"))
 		.def("SetDataWidthBits", py::overload_cast<const uint32_t &, const DMAChannel &>(&clap::AxiDMA<uint64_t>::SetDataWidthBits), py::arg("width"), py::arg("channel") = DMAChannel::MM2S)
+		.def("SetDataWidthBits", py::overload_cast<const std::array<uint32_t, 2> &>(&clap::AxiDMA<uint64_t>::SetDataWidthBits), py::arg("widths"))
 		.def("GetMM2SSrcAddr", &clap::AxiDMA<uint64_t>::GetMM2SSrcAddr)
 		.def("GetS2MMDestAddr", &clap::AxiDMA<uint64_t>::GetS2MMDestAddr)
 		.def("GetMM2SByteLength", &clap::AxiDMA<uint64_t>::GetMM2SByteLength)
