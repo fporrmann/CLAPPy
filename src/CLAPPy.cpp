@@ -212,6 +212,9 @@ PYBIND11_MODULE(MODULE_NAME, m)
 		.def("SetBufferLengthRegWidth", &clap::AxiDMA<uint64_t>::SetBufferLengthRegWidth, py::arg("width"))
 		.def("SetDataWidth", py::overload_cast<const uint32_t &, const DMAChannel &>(&clap::AxiDMA<uint64_t>::SetDataWidth), py::arg("width"), py::arg("channel") = DMAChannel::MM2S)
 		.def("SetDataWidth", py::overload_cast<const std::array<uint32_t, 2> &>(&clap::AxiDMA<uint64_t>::SetDataWidth), py::arg("widths"))
+		.def("GetDataWidth", &clap::AxiDMA<uint64_t>::GetDataWidth, py::arg("channel"))
+		.def("SetHasDRE", &clap::AxiDMA<uint64_t>::SetHasDRE, py::arg("dre"), py::arg("channel"))
+		.def("GetHasDRE", &clap::AxiDMA<uint64_t>::GetHasDRE, py::arg("channel"))
 		.def("SetDataWidthBits", py::overload_cast<const uint32_t &, const DMAChannel &>(&clap::AxiDMA<uint64_t>::SetDataWidthBits), py::arg("width"), py::arg("channel") = DMAChannel::MM2S)
 		.def("SetDataWidthBits", py::overload_cast<const std::array<uint32_t, 2> &>(&clap::AxiDMA<uint64_t>::SetDataWidthBits), py::arg("widths"))
 		.def("GetMM2SSrcAddr", &clap::AxiDMA<uint64_t>::GetMM2SSrcAddr)
@@ -219,7 +222,10 @@ PYBIND11_MODULE(MODULE_NAME, m)
 		.def("GetMM2SByteLength", &clap::AxiDMA<uint64_t>::GetMM2SByteLength)
 		.def("GetS2MMByteLength", &clap::AxiDMA<uint64_t>::GetS2MMByteLength)
 		.def("GetMM2SRuntime", &clap::AxiDMA<uint64_t>::GetMM2SRuntime)
-		.def("GetS2MMRuntime", &clap::AxiDMA<uint64_t>::GetS2MMRuntime);
+		.def("GetS2MMRuntime", &clap::AxiDMA<uint64_t>::GetS2MMRuntime)
+		.def("GetS2MMRuntime", &clap::AxiDMA<uint64_t>::IsSGEnabled)
+		.def("StartSG", py::overload_cast<const clap::Memory &, const clap::Memory &, const clap::Memory &, const clap::Memory &, const uint32_t &, const uint8_t &, const uint32_t &>(&clap::AxiDMA<uint64_t>::StartSG), py::arg("memBDTx"), py::arg("memBDRx"), py::arg("memDataIn"), py::arg("memDataOut"), py::arg("maxPktByteLen"), py::arg("numPkts") = 1, py::arg("bdsPerPkt") = 1)
+		.def("StartSG", py::overload_cast<const DMAChannel &, const clap::Memory &, const clap::Memory &, const uint32_t &, const uint8_t &, const uint32_t &>(&clap::AxiDMA<uint64_t>::StartSG), py::arg("channel"), py::arg("memBD"), py::arg("memData"), py::arg("maxPktByteLen"), py::arg("numPkts") = 1, py::arg("bdsPerPkt") = 1);
 
 	hlsCore
 		.def(py::init<const clap::CLAPPtr &, const uint64_t &, const std::string &>(), py::arg("clap"), py::arg("ctrlOffset"), py::arg("name"))
