@@ -32,6 +32,7 @@
 #include <IP_Cores/VDMA.hpp>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/stl_bind.h>
 
 #include <array>
 #include <cstdint>
@@ -66,10 +67,30 @@ std::string printWrapper(const T &obj)
 	return ss.str();
 }
 
+PYBIND11_MAKE_OPAQUE(clap::CLAPBuffer<uint8_t>);
+PYBIND11_MAKE_OPAQUE(clap::CLAPBuffer<uint16_t>);
+PYBIND11_MAKE_OPAQUE(clap::CLAPBuffer<uint32_t>);
+PYBIND11_MAKE_OPAQUE(clap::CLAPBuffer<uint64_t>);
+
+PYBIND11_MAKE_OPAQUE(clap::CLAPBuffer<int8_t>);
+PYBIND11_MAKE_OPAQUE(clap::CLAPBuffer<int16_t>);
+PYBIND11_MAKE_OPAQUE(clap::CLAPBuffer<int32_t>);
+PYBIND11_MAKE_OPAQUE(clap::CLAPBuffer<int64_t>);
+
 PYBIND11_MODULE(MODULE_NAME, m)
 {
 	py::register_exception<clap::CLAPException>(m, "ClapExp");
 	py::register_exception<clap::MemoryException>(m, "MemoryExp");
+
+	py::bind_vector<clap::CLAPBuffer<uint8_t>>(m, "CLAPBuffer8u");
+	py::bind_vector<clap::CLAPBuffer<uint16_t>>(m, "CLAPBuffer16u");
+	py::bind_vector<clap::CLAPBuffer<uint32_t>>(m, "CLAPBuffer32u");
+	py::bind_vector<clap::CLAPBuffer<uint64_t>>(m, "CLAPBuffer64u");
+
+	py::bind_vector<clap::CLAPBuffer<int8_t>>(m, "CLAPBuffer8s");
+	py::bind_vector<clap::CLAPBuffer<int16_t>>(m, "CLAPBuffer16s");
+	py::bind_vector<clap::CLAPBuffer<int32_t>>(m, "CLAPBuffer32s");
+	py::bind_vector<clap::CLAPBuffer<int64_t>>(m, "CLAPBuffer64s");
 
 	py::class_<clap::Memory>(m, "Memory").def("__repr__", &printWrapper<clap::Memory>);
 
