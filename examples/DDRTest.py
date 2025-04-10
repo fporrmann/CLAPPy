@@ -1,5 +1,5 @@
 import random
-from CLAPPy import CLAP
+from CLAPPy import CLAP, CLAPBuffer32u, CLAPBuffer32s
 
 DDR_BASE = 0x000000000
 DDR_SIZE = 0x100000000
@@ -25,7 +25,7 @@ else:
 	print("Single Write/Read Test failed")
 
 # Initialize a list of unsigned 32-bit values
-data = [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x87654321]
+data = CLAPBuffer32u([0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x87654321])
 
 # Write and read a list of unsigned 32-bit values
 clap.Write(TEST_ADDR, data)
@@ -36,7 +36,7 @@ else:
 	print("Small Block Write/Read Test failed")
 
 # Initialize a list of random signed 32-bit values
-data = random.sample(range(-0xFFFFF, 0xFFFFF), TEST_DATA_SIZE)
+data = CLAPBuffer32s(random.sample(range(-0xFFFFF, 0xFFFFF), TEST_DATA_SIZE))
 
 # Allocate a buffer in DDR
 buf = clap.AllocMemoryDDR(elements=TEST_DATA_SIZE, sizeOfElement=TEST_DATA_TYPE_BYTES)

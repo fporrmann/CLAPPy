@@ -1,5 +1,6 @@
 from random import randint
 from CLAPPy import CLAP
+from CLAPPy import CLAPBuffer32u
 from CLAPPy import AxiDMA
 
 DDR_BASE_ADDR = 0x000000000
@@ -24,7 +25,9 @@ dataIn = []
 for _ in range(0,TEST_DATA_SIZE):
 	dataIn.append(randint(0, 0xFFFFFFFF))
 
-dataOut = [0xFFFFFFFF] * TEST_DATA_SIZE
+dataIn = CLAPBuffer32u(dataIn)
+
+dataOut = CLAPBuffer32u([0xFFFFFFFF] * TEST_DATA_SIZE)
 
 axiDMA = AxiDMA(clap, AXIDMA_BASE_ADDR)
 

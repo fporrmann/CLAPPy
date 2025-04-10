@@ -1,5 +1,6 @@
 import random
 from CLAPPy import CLAP
+from CLAPPy import CLAPBuffer32u
 from CLAPPy import HLSCore
 
 DDR_BASE_ADDR = 0x000000000
@@ -25,8 +26,8 @@ clap = CLAP.CreatePCIe()
 # Add a memory region
 clap.AddMemoryRegion(CLAP.MemoryType.DDR, DDR_BASE_ADDR, DDR_SIZE)
 
-dataIn = random.sample(range(0, 0xFFFFFFFF), TEST_DATA_SIZE)
-dataOut = [0xFFFFFFFF] * TEST_DATA_SIZE
+dataIn = CLAPBuffer32u(random.sample(range(0, 0xFFFFFFFF), TEST_DATA_SIZE))
+dataOut = CLAPBuffer32u([0xFFFFFFFF] * TEST_DATA_SIZE)
 
 hlsTest = HLSCore(clap, HLS_CORE_BASE_ADDR, "hlsTest")
 
