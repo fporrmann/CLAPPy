@@ -270,6 +270,7 @@ PYBIND11_MODULE(MODULE_NAME, m)
 		.def("AllocMemoryDDR", py::overload_cast<const uint64_t &, const int32_t &>(&clap::CLAP::AllocMemoryDDR), py::arg("byteSize"), py::arg("memIdx") = -1)
 		.def("AllocMemoryBRAM", py::overload_cast<const uint64_t &, const std::size_t &, const int32_t &>(&clap::CLAP::AllocMemoryBRAM), py::arg("elements"), py::arg("sizeOfElement"), py::arg("memIdx") = -1)
 		.def("AllocMemoryBRAM", py::overload_cast<const uint64_t &, const int32_t &>(&clap::CLAP::AllocMemoryBRAM), py::arg("byteSize"), py::arg("memIdx") = -1)
+		.def("FreeMemory", &clap::CLAP::FreeMemory, py::arg("mem"))
 		//////////////////////////////////////
 		.def("Write8", py::overload_cast<const clap::Memory &, const uint8_t &>(&clap::CLAP::Write8), py::arg("mem"), py::arg("data"))
 		.def("Write8", py::overload_cast<const uint64_t &, const uint8_t &>(&clap::CLAP::Write8), py::arg("addr"), py::arg("data"))
