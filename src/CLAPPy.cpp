@@ -45,6 +45,56 @@ namespace py = pybind11;
 
 // TODO: Look into Buffer protocol
 
+// Macro to bind common methods for any vector type
+#define BIND_VECTOR_COMMON_METHODS(vec_type)                                                                             \
+	.def("size", &vec_type::size)                                                                                        \
+		.def("append", [](vec_type &v, typename vec_type::value_type item) { v.push_back(item); })                       \
+		.def("clear", &vec_type::clear)                                                                                  \
+		.def("extend", [](vec_type &v, const vec_type &other) { v.insert(v.end(), other.begin(), other.end()); })        \
+		.def("pop", [](vec_type &v) {                                                                                    \
+			if (v.empty())                                                                                               \
+				throw std::out_of_range("pop from empty vector");                                                        \
+			typename vec_type::value_type item = v.back();                                                               \
+			v.pop_back();                                                                                                \
+			return item;                                                                                                 \
+		})                                                                                                               \
+		.def("insert", [](vec_type &v, size_t index, typename vec_type::value_type item) {                               \
+			if (index > v.size())                                                                                        \
+				throw std::out_of_range("inser index out of range");                                                     \
+			v.insert(v.begin() + index, item);                                                                           \
+		})                                                                                                               \
+		.def("remove", [](vec_type &v, typename vec_type::value_type item) {                                             \
+			auto it = std::find(v.begin(), v.end(), item);                                                               \
+			if (it != v.end())                                                                                           \
+				v.erase(it);                                                                                             \
+			else                                                                                                         \
+				throw std::invalid_argument("value to remove not found in vector");                                      \
+		})                                                                                                               \
+		.def("sort", [](vec_type &v) { std::sort(v.begin(), v.end()); })                                                 \
+		.def("resize", [](vec_type &v, size_t new_size) { v.resize(new_size); })                                         \
+		.def("__contains__", [](const vec_type &v, typename vec_type::value_type item) {                                 \
+			return std::find(v.begin(), v.end(), item) != v.end();                                                       \
+		})                                                                                                               \
+		.def(                                                                                                            \
+			"__iter__", [](const vec_type &v) { return py::make_iterator(v.begin(), v.end()); }, py::keep_alive<0, 1>()) \
+		.def("__repr__", [](const vec_type &v) {                                                                         \
+			std::stringstream ss;                                                                                        \
+			ss << "[";                                                                                                   \
+			for (size_t i = 0; i < v.size(); ++i)                                                                        \
+			{                                                                                                            \
+				if (i > 0) ss << ", ";                                                                                   \
+				ss << v[i];                                                                                              \
+			}                                                                                                            \
+			ss << "]";                                                                                                   \
+			return ss.str();                                                                                             \
+		})                                                                                                               \
+		.def("__len__", &vec_type::size)
+
+// Macro to bind the vector type and its common methods
+#define BIND_VECTOR(m, vec_type, name) \
+	py::bind_vector<vec_type>(m, name) \
+		BIND_VECTOR_COMMON_METHODS(vec_type)
+
 template<typename T>
 void defRWTemplate(py::class_<clap::CLAP, clap::CLAPPtr> &c, const bool &isSigned = false)
 {
@@ -82,15 +132,15 @@ PYBIND11_MODULE(MODULE_NAME, m)
 	py::register_exception<clap::CLAPException>(m, "ClapExp");
 	py::register_exception<clap::MemoryException>(m, "MemoryExp");
 
-	py::bind_vector<clap::CLAPBuffer<uint8_t>>(m, "CLAPBuffer8u");
-	py::bind_vector<clap::CLAPBuffer<uint16_t>>(m, "CLAPBuffer16u");
-	py::bind_vector<clap::CLAPBuffer<uint32_t>>(m, "CLAPBuffer32u");
-	py::bind_vector<clap::CLAPBuffer<uint64_t>>(m, "CLAPBuffer64u");
+	BIND_VECTOR(m, clap::CLAPBuffer<uint8_t>, "CLAPBuffer8u");
+	BIND_VECTOR(m, clap::CLAPBuffer<uint16_t>, "CLAPBuffer16u");
+	BIND_VECTOR(m, clap::CLAPBuffer<uint32_t>, "CLAPBuffer32u");
+	BIND_VECTOR(m, clap::CLAPBuffer<uint64_t>, "CLAPBuffer64u");
 
-	py::bind_vector<clap::CLAPBuffer<int8_t>>(m, "CLAPBuffer8s");
-	py::bind_vector<clap::CLAPBuffer<int16_t>>(m, "CLAPBuffer16s");
-	py::bind_vector<clap::CLAPBuffer<int32_t>>(m, "CLAPBuffer32s");
-	py::bind_vector<clap::CLAPBuffer<int64_t>>(m, "CLAPBuffer64s");
+	BIND_VECTOR(m, clap::CLAPBuffer<int8_t>, "CLAPBuffer8s");
+	BIND_VECTOR(m, clap::CLAPBuffer<int16_t>, "CLAPBuffer16s");
+	BIND_VECTOR(m, clap::CLAPBuffer<int32_t>, "CLAPBuffer32s");
+	BIND_VECTOR(m, clap::CLAPBuffer<int64_t>, "CLAPBuffer64s");
 
 	py::class_<clap::Memory>(m, "Memory").def("__repr__", &printWrapper<clap::Memory>);
 
