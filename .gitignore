@@ -13,3 +13,4 @@ _deps
 CLAPPy.egg-info/
 build/
 test_env/
+scripts/stub/stub_env/
