@@ -164,13 +164,13 @@ PYBIND11_MODULE(MODULE_NAME, m)
 		.value("AP_INTR_READY", clap::HLSCore::APInterrupts::AP_INTR_READY)
 		.value("AP_INTR_ALL", clap::HLSCore::APInterrupts::AP_INTR_ALL);
 
-	py::enum_<clap::AxiDMA<uint64_t>::DMAInterrupts>(hlsCore, "DMAInterrupts")
+	py::enum_<clap::AxiDMA<uint64_t>::DMAInterrupts>(axiDMA, "DMAInterrupts")
 		.value("INTR_ON_COMPLETE", clap::AxiDMA<uint64_t>::DMAInterrupts::INTR_ON_COMPLETE)
 		.value("INTR_ON_DELAY", clap::AxiDMA<uint64_t>::DMAInterrupts::INTR_ON_DELAY)
 		.value("INTR_ON_ERROR", clap::AxiDMA<uint64_t>::DMAInterrupts::INTR_ON_ERROR)
 		.value("INTR_ALL", clap::AxiDMA<uint64_t>::DMAInterrupts::INTR_ALL);
 
-	py::enum_<clap::VDMA<uint64_t>::VDMAInterrupts>(hlsCore, "VDMAInterrupts")
+	py::enum_<clap::VDMA<uint64_t>::VDMAInterrupts>(vdma, "VDMAInterrupts")
 		.value("INTR_ON_COMPLETE", clap::VDMA<uint64_t>::VDMAInterrupts::VDMA_INTR_ON_FRAME_COUNT)
 		.value("INTR_ON_DELAY", clap::VDMA<uint64_t>::VDMAInterrupts::VDMA_INTR_ON_DELAY)
 		.value("INTR_ON_ERROR", clap::VDMA<uint64_t>::VDMAInterrupts::VDMA_INTR_ON_ERROR)
