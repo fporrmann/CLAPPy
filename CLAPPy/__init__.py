@@ -9,7 +9,7 @@ __all__ = ['AxiDMA', 'AxiGPIO', 'AxiInterruptController', 'CLAP', 'CLAPBuffer16s
 
 from typing import Type, Union
 
-CLAPBufferType = Union[
+CLAPBufferInst = Union[
 	CLAPBuffer8s,
 	CLAPBuffer16s,
 	CLAPBuffer32s,
