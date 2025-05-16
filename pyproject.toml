@@ -1,6 +1,18 @@
 [build-system]
-requires = [
-    "setuptools>=42",
-    "pybind11>=2.10.0",
+requires = ["scikit-build-core", "pybind11>=2.10.0", "setuptools>=42"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "CLAPPy"
+version = "0.1.6"
+description = "A pybind11-based Python binding for the CLAP library"
+authors = [
+    { name = "Florian Porrmann", email = "fporrmann@techfak.uni-bielefeld.de" }
 ]
-build-backend = "setuptools.build_meta"
+requires-python = ">=3.7"
+readme = "README.md"
+license = { text = "MIT" }
+urls = { Homepage = "https://github.com/fporrmann/CLAPPy" }
+
+[tool.scikit-build]
+cmake.version = ">=3.21"

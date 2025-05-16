@@ -2061,7 +2061,7 @@ class VDMA:
         ...
     def __init__(self, clap: CLAP, ctrlOffset: int) -> None:
         ...
-__version__: str = '0.1.5'
+__version__: str = '0.1.6'
 
 from typing import Union
 CLAPBufferType = Union[

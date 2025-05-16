@@ -5,7 +5,8 @@ CLAPPY_DIR="../.."
 FILE_NAME="CLAPPy"
 FILE_EXT="pyi"
 OUTPUT_FILE="$FILE_NAME.$FILE_EXT"
-OUTPUT_PATH="$CLAPPY_DIR/$OUTPUT_FILE"
+OUTPUT_DIR="CLAPPy"
+OUTPUT_PATH="$CLAPPY_DIR/$OUTPUT_DIR/$OUTPUT_FILE"
 
 REBUILD_CLAPPY=0
 
@@ -44,20 +45,32 @@ if [ $REBUILD_CLAPPY -eq 1 ]; then
 	echo "CLAPPy installed successfully."
 fi
 
-echo "Generating stubs ..."
-pybind11-stubgen --enum-class-locations=DMAChannel:CLAPPy.CLAP \
---enum-class-locations=Verbosity:CLAPPy.CLAP \
---enum-class-locations=DualChannel:CLAPPy.AxiGPIO  \
---enum-class-locations=ResetOnInit:CLAPPy.AxiGPIO \
---enum-class-locations=GPIOInterrupts:CLAPPy.AxiGPIO \
---enum-class-locations=AddressType:CLAPPy.HLSCore \
---enum-class-locations=APInterrupts:CLAPPy.HLSCore \
---enum-class-locations=DMAInterrupts:CLAPPy.AxiDMA \
---enum-class-locations=VDMAInterrupts:CLAPPy.VDMA \
+echo "Generating stubs in $OUTPUT_PATH ... "
+pybind11-stubgen --enum-class-locations=DMAChannel:CLAPPy.CLAPPy.CLAP \
+--enum-class-locations=Verbosity:CLAPPy.CLAPPy.CLAP \
+--enum-class-locations=DualChannel:CLAPPy.CLAPPy.AxiGPIO  \
+--enum-class-locations=ResetOnInit:CLAPPy.CLAPPy.AxiGPIO \
+--enum-class-locations=GPIOInterrupts:CLAPPy.CLAPPy.AxiGPIO \
+--enum-class-locations=AddressType:CLAPPy.CLAPPy.HLSCore \
+--enum-class-locations=APInterrupts:CLAPPy.CLAPPy.HLSCore \
+--enum-class-locations=DMAInterrupts:CLAPPy.CLAPPy.AxiDMA \
+--enum-class-locations=VDMAInterrupts:CLAPPy.CLAPPy.VDMA \
 --print-invalid-expressions-as-is \
 -o $CLAPPY_DIR \
 --stub-extension $FILE_EXT \
-CLAPPy
+CLAPPy.CLAPPy
+
+# Check the return code of the last command
+if [ $? -ne 0 ]; then
+	echo "Error: Failed to generate stubs."
+	exit 1
+fi
+
+# Check if the output file exists
+if [ ! -f "$OUTPUT_PATH" ]; then
+	echo "Error: Output file $OUTPUT_PATH does not exist."
+	exit 1
+fi
 
 echo "Stubs generated successfully."
 

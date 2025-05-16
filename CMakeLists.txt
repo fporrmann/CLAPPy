@@ -1,6 +1,17 @@
 cmake_minimum_required(VERSION 3.21)
 set(PROJECT_NAME CLAPPy)
-project(${PROJECT_NAME} LANGUAGES CXX)
+
+if(NOT DEFINED CLAPPY_VERSION)
+	if(DEFINED SKBUILD_PROJECT_VERSION)
+		# If using skbuild, set the version from the project version
+		set(CLAPPY_VERSION ${SKBUILD_PROJECT_VERSION})
+	else()
+		# If not using skbuild, set a default version
+		set(CLAPPY_VERSION 0.0.0)
+	endif()
+endif()
+
+project(${PROJECT_NAME} LANGUAGES CXX VERSION ${CLAPPY_VERSION})
 
 # Use the new FindPython mode
 set(PYBIND11_FINDPYTHON ON)
@@ -38,3 +49,6 @@ endif()
 
 pybind11_add_module(${PROJECT_NAME} src/CLAPPy.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CLAP_LIBS})
+
+install(TARGETS ${PROJECT_NAME} DESTINATION CLAPPy)
+install(DIRECTORY CLAPPy/ DESTINATION CLAPPy)
