@@ -1,6 +1,6 @@
 from __future__ import annotations
 import typing
-__all__ = ['AxiDMA', 'AxiGPIO', 'AxiInterruptController', 'CLAP', 'CLAPBuffer16s', 'CLAPBuffer16u', 'CLAPBuffer32s', 'CLAPBuffer32u', 'CLAPBuffer64s', 'CLAPBuffer64u', 'CLAPBuffer8s', 'CLAPBuffer8u', 'ClapExp', 'HLSCore', 'Memory', 'MemoryExp', 'VDMA', 'CLAPBufferType']
+__all__ = ['AxiDMA', 'AxiGPIO', 'AxiInterruptController', 'CLAP', 'CLAPBuffer16s', 'CLAPBuffer16u', 'CLAPBuffer32s', 'CLAPBuffer32u', 'CLAPBuffer64s', 'CLAPBuffer64u', 'CLAPBuffer8s', 'CLAPBuffer8u', 'ClapExp', 'HLSCore', 'Memory', 'MemoryExp', 'VDMA', 'CLAPBufferInst', 'CLAPBufferType']
 class AxiDMA:
     class DMAInterrupts:
         """
@@ -2061,10 +2061,11 @@ class VDMA:
         ...
     def __init__(self, clap: CLAP, ctrlOffset: int) -> None:
         ...
-__version__: str = '0.1.6'
+__version__: str = '0.1.8'
 
-from typing import Union
-CLAPBufferType = Union[
+from typing import Type, Union
+
+CLAPBufferInst = Union[
 	CLAPBuffer8s,
 	CLAPBuffer16s,
 	CLAPBuffer32s,
@@ -2073,4 +2074,15 @@ CLAPBufferType = Union[
 	CLAPBuffer16u,
 	CLAPBuffer32u,
 	CLAPBuffer64u,
+]
+
+CLAPBufferType = Union[
+	Type[CLAPBuffer8s],
+	Type[CLAPBuffer16s],
+	Type[CLAPBuffer32s],
+	Type[CLAPBuffer64s],
+	Type[CLAPBuffer8u],
+	Type[CLAPBuffer16u],
+	Type[CLAPBuffer32u],
+	Type[CLAPBuffer64u],
 ]
