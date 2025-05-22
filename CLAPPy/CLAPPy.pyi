@@ -1,6 +1,6 @@
 from __future__ import annotations
 import typing
-__all__ = ['AxiDMA', 'AxiGPIO', 'AxiInterruptController', 'CLAP', 'CLAPBuffer16s', 'CLAPBuffer16u', 'CLAPBuffer32s', 'CLAPBuffer32u', 'CLAPBuffer64s', 'CLAPBuffer64u', 'CLAPBuffer8s', 'CLAPBuffer8u', 'ClapExp', 'HLSCore', 'Memory', 'MemoryExp', 'VDMA', 'CLAPBufferInst', 'CLAPBufferType']
+__all__ = ['AxiDMA', 'AxiGPIO', 'AxiInterruptController', 'CLAP', 'CLAPBuffer16s', 'CLAPBuffer16u', 'CLAPBuffer32s', 'CLAPBuffer32u', 'CLAPBuffer64s', 'CLAPBuffer64u', 'CLAPBuffer8s', 'CLAPBuffer8u', 'ClapExp', 'HLSCore', 'Memory', 'MemoryExp', 'VDMA', 'CLAPBufferInst', 'CLAPBufferType', 'CLAPCreateType']
 class AxiDMA:
     class DMAInterrupts:
         """
@@ -2061,9 +2061,9 @@ class VDMA:
         ...
     def __init__(self, clap: CLAP, ctrlOffset: int) -> None:
         ...
-__version__: str = '0.1.8'
+__version__: str = '0.1.9'
 
-from typing import Type, Union
+from typing import Type, Union, Callable
 
 CLAPBufferInst = Union[
 	CLAPBuffer8s,
@@ -2085,4 +2085,9 @@ CLAPBufferType = Union[
 	Type[CLAPBuffer16u],
 	Type[CLAPBuffer32u],
 	Type[CLAPBuffer64u],
+]
+
+CLAPCreateType = Union[
+	Callable[[], CLAP.CreatePCIe],
+	Callable[[], CLAP.CreatePetaLinux],
 ]

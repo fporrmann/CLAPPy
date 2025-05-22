@@ -5,9 +5,30 @@ try:
 except ImportError:
     __version__ = "unknown"
 
-__all__ = ['AxiDMA', 'AxiGPIO', 'AxiInterruptController', 'CLAP', 'CLAPBuffer16s', 'CLAPBuffer16u', 'CLAPBuffer32s', 'CLAPBuffer32u', 'CLAPBuffer64s', 'CLAPBuffer64u', 'CLAPBuffer8s', 'CLAPBuffer8u', 'ClapExp', 'HLSCore', 'Memory', 'MemoryExp', 'VDMA', 'CLAPBufferInst', 'CLAPBufferType']
+__all__ = [
+	'AxiDMA',
+	'AxiGPIO',
+	'AxiInterruptController',
+	'CLAP',
+	'CLAPBuffer16s',
+	'CLAPBuffer16u',
+	'CLAPBuffer32s',
+	'CLAPBuffer32u',
+	'CLAPBuffer64s',
+	'CLAPBuffer64u',
+	'CLAPBuffer8s',
+	'CLAPBuffer8u',
+	'ClapExp',
+	'HLSCore',
+	'Memory',
+	'MemoryExp',
+	'VDMA',
+	'CLAPBufferInst',
+	'CLAPBufferType',
+	'CLAPCreateType',
+]
 
-from typing import Type, Union
+from typing import Type, Union, Callable
 
 CLAPBufferInst = Union[
 	CLAPBuffer8s,
@@ -29,4 +50,9 @@ CLAPBufferType = Union[
 	Type[CLAPBuffer16u],
 	Type[CLAPBuffer32u],
 	Type[CLAPBuffer64u],
+]
+
+CLAPCreateType = Union[
+	Callable[[], CLAP.CreatePCIe],
+	Callable[[], CLAP.CreatePetaLinux],
 ]

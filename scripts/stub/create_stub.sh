@@ -93,7 +93,7 @@ sed -i 's/callback: std::function<void (clap::AxiGPIO::Channel const&, unsigned 
 ## At the end of the file, add the following:
 {
 	echo ""
-	echo "from typing import Type, Union"
+	echo "from typing import Type, Union, Callable"
 	echo ""
 	echo "CLAPBufferInst = Union["
 	echo "	CLAPBuffer8s,"
@@ -116,9 +116,14 @@ sed -i 's/callback: std::function<void (clap::AxiGPIO::Channel const&, unsigned 
 	echo "	Type[CLAPBuffer32u],"
 	echo "	Type[CLAPBuffer64u],"
 	echo "]"
+	echo ""
+	echo "CLAPCreateType = Union["
+	echo "	Callable[[], CLAP.CreatePCIe],"
+	echo "	Callable[[], CLAP.CreatePetaLinux],"
+	echo "]"
 } >> "$OUTPUT_PATH"
 
 # Update the __all__ = [] list to include the new types
-sed -i "s/\(__all__ = \[.*\)\]/\1, 'CLAPBufferInst', 'CLAPBufferType']/" "$OUTPUT_PATH"
+sed -i "s/\(__all__ = \[.*\)\]/\1, 'CLAPBufferInst', 'CLAPBufferType', 'CLAPCreateType']/" "$OUTPUT_PATH"
 
 echo "Done"
