@@ -142,7 +142,7 @@ PYBIND11_MODULE(MODULE_NAME, m)
 	BIND_VECTOR(m, clap::CLAPBuffer<int32_t>, "CLAPBuffer32s");
 	BIND_VECTOR(m, clap::CLAPBuffer<int64_t>, "CLAPBuffer64s");
 
-	py::class_<clap::Memory>(m, "Memory").def("__repr__", &printWrapper<clap::Memory>);
+	py::class_<clap::Memory, clap::MemoryPtr>(m, "Memory").def("__repr__", &printWrapper<clap::Memory>);
 
 	py::class_<clap::CLAP, clap::CLAPPtr> clap(m, "CLAP");
 	py::class_<clap::HLSCore> hlsCore(m, "HLSCore");
@@ -316,10 +316,10 @@ PYBIND11_MODULE(MODULE_NAME, m)
 		.def("RegisterInterruptCallback", &clap::HLSCore::RegisterInterruptCallback, py::arg("callback"));
 
 	clap.def("AddMemoryRegion", py::overload_cast<const clap::CLAP::MemoryType &, const uint64_t &, const uint64_t &>(&clap::CLAP::AddMemoryRegion), py::arg("type"), py::arg("baseAddr"), py::arg("size"))
-		.def("AllocMemoryDDR", py::overload_cast<const uint64_t &, const std::size_t &, const int32_t &>(&clap::CLAP::AllocMemoryDDR), py::arg("elements"), py::arg("sizeOfElement"), py::arg("memIdx") = -1)
-		.def("AllocMemoryDDR", py::overload_cast<const uint64_t &, const int32_t &>(&clap::CLAP::AllocMemoryDDR), py::arg("byteSize"), py::arg("memIdx") = -1)
-		.def("AllocMemoryBRAM", py::overload_cast<const uint64_t &, const std::size_t &, const int32_t &>(&clap::CLAP::AllocMemoryBRAM), py::arg("elements"), py::arg("sizeOfElement"), py::arg("memIdx") = -1)
-		.def("AllocMemoryBRAM", py::overload_cast<const uint64_t &, const int32_t &>(&clap::CLAP::AllocMemoryBRAM), py::arg("byteSize"), py::arg("memIdx") = -1)
+		.def("AllocMemoryDDR", py::overload_cast<const uint64_t &, const std::size_t &, const int32_t &>(&clap::CLAP::AllocMemoryDDR<clap::MemoryPtr>), py::arg("elements"), py::arg("sizeOfElement"), py::arg("memIdx") = -1)
+		.def("AllocMemoryDDR", py::overload_cast<const uint64_t &, const int32_t &>(&clap::CLAP::AllocMemoryDDR<clap::MemoryPtr>), py::arg("byteSize"), py::arg("memIdx") = -1)
+		.def("AllocMemoryBRAM", py::overload_cast<const uint64_t &, const std::size_t &, const int32_t &>(&clap::CLAP::AllocMemoryBRAM<clap::MemoryPtr>), py::arg("elements"), py::arg("sizeOfElement"), py::arg("memIdx") = -1)
+		.def("AllocMemoryBRAM", py::overload_cast<const uint64_t &, const int32_t &>(&clap::CLAP::AllocMemoryBRAM<clap::MemoryPtr>), py::arg("byteSize"), py::arg("memIdx") = -1)
 		.def("FreeMemory", &clap::CLAP::FreeMemory, py::arg("mem"))
 		//////////////////////////////////////
 		.def("Write8", py::overload_cast<const clap::Memory &, const uint8_t &>(&clap::CLAP::Write8), py::arg("mem"), py::arg("data"))

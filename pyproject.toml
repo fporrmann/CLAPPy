@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "CLAPPy"
-version = "0.1.9"
+version = "0.1.10"
 description = "A pybind11-based Python binding for the CLAP library"
 authors = [{ name = "Florian Porrmann", email = "fporrmann@techfak.uni-bielefeld.de" }]
 requires-python = ">=3.7"
