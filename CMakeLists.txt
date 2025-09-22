@@ -19,32 +19,31 @@ set(PYBIND11_FINDPYTHON ON)
 # Try to find pybind11 quietly first
 find_package(pybind11 QUIET)
 if(NOT pybind11_FOUND)
-    message (STATUS "Could not find locally installed pybind11. Fetching it via FetchContent ...")
-    include(FetchContent)
-    FetchContent_Declare(
-        pybind11
-        GIT_REPOSITORY https://github.com/pybind/pybind11.git
-        GIT_TAG v2.13.6
-    )
-    FetchContent_MakeAvailable(pybind11)
+	message (STATUS "Could not find locally installed pybind11. Fetching it via FetchContent ...")
+	include(FetchContent)
+	FetchContent_Declare(
+		pybind11
+		GIT_REPOSITORY https://github.com/pybind/pybind11.git
+		GIT_TAG v2.13.6
+	)
+	FetchContent_MakeAvailable(pybind11)
 endif()
 
 # Try to find CLAP quietly first
 find_package(CLAP QUIET)
 if(NOT CLAP_FOUND)
-    message (STATUS "Could not find locally installed CLAP. Fetching it via FetchContent ...")
-    include(FetchContent)
-    FetchContent_Declare(
-        CLAP
-        GIT_REPOSITORY https://github.com/mkaiser/CLAP.git
-        GIT_TAG cmake_improvements
-    )
-    FetchContent_MakeAvailable(CLAP)
+	message (STATUS "Could not find locally installed CLAP. Fetching it via FetchContent ...")
+	include(FetchContent)
+	FetchContent_Declare(
+		CLAP
+		GIT_REPOSITORY https://github.com/fporrmann/CLAP.git
+	)
+	FetchContent_MakeAvailable(CLAP)
 
-    # Append path to clap-config.cmake to search path
-    list(APPEND CMAKE_PREFIX_PATH "${clap_SOURCE_DIR}/API/cmake/modules")
+	# Append path to clap-config.cmake to search path
+	list(APPEND CMAKE_PREFIX_PATH "${clap_SOURCE_DIR}/API/cmake/modules")
 
-    find_package(CLAP REQUIRED)
+	find_package(CLAP REQUIRED)
 endif()
 
 
