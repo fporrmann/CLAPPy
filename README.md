@@ -19,6 +19,7 @@ git clone https://github.com/fporrmann/CLAPPy.git
 cd CLAPPy
 # Build and install the package
 pip install .
+# use ```pip install . -v ``` for verbose log output 
 ```
 
 ## Usage

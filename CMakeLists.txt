@@ -7,7 +7,7 @@ if(NOT DEFINED CLAPPY_VERSION)
 		set(CLAPPY_VERSION ${SKBUILD_PROJECT_VERSION})
 	else()
 		# If not using skbuild, set a default version
-		set(CLAPPY_VERSION 0.1.0)
+		set(CLAPPY_VERSION 0.1.11)
 	endif()
 endif()
 
@@ -35,9 +35,16 @@ if(NOT CLAP_FOUND)
     include(FetchContent)
     FetchContent_Declare(
         CLAP
-          GIT_REPOSITORY https://github.com/fporrmann/CLAP.git
+        GIT_REPOSITORY https://github.com/fporrmann/CLAP.git
+        GIT_TAG master
     )
     FetchContent_MakeAvailable(CLAP)
+
+    # append path to clap-config.cmake to search path
+    # message(STATUS "clap_SOURCE_DIR: ${clap_SOURCE_DIR}")
+    list(APPEND CMAKE_PREFIX_PATH "${clap_SOURCE_DIR}/API/cmake/modules")
+
+    # message (STATUS "CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
 
     find_package(CLAP REQUIRED)
 endif()
