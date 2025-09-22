@@ -16,29 +16,37 @@ project(${PROJECT_NAME} LANGUAGES CXX VERSION ${CLAPPY_VERSION})
 # Use the new FindPython mode
 set(PYBIND11_FINDPYTHON ON)
 
-include(FetchContent)
-FetchContent_Declare(
-	pybind11
-	GIT_REPOSITORY https://github.com/pybind/pybind11.git
-	GIT_TAG 0630807c3070287c716f6be3eacb00b8816b4215 # v2.11.1
-)
+# Try to find pybind11 quietly first
+find_package(pybind11 QUIET)
+if(NOT pybind11_FOUND)
+    message (STATUS "Could not find locally installed pybind11. Fetching it via FetchContent...")
+    include(FetchContent)
+    FetchContent_Declare(
+        pybind11
+        GIT_REPOSITORY https://github.com/pybind/pybind11.git
+        GIT_TAG 0630807c3070287c716f6be3eacb00b8816b4215 # v2.11.1
+    )
+    FetchContent_MakeAvailable(pybind11)
+endif()
 
-FetchContent_MakeAvailable(pybind11)
+# Try to find CLAP quietly first
+find_package(CLAP QUIET)
+if(NOT CLAP_FOUND)
+    message (STATUS "Could not find locally installed CLAP. Fetching it via FetchContent...")
+    include(FetchContent)
+    FetchContent_Declare(
+        CLAP
+        GIT_REPOSITORY https://github.com/mkaiser/CLAP.git
+        GIT_TAG cmake_improvements
+    )
+    FetchContent_MakeAvailable(CLAP)
 
-FetchContent_Declare(
-	CLAP
-	GIT_REPOSITORY https://github.com/fporrmann/CLAP.git
-)
+    # Append path to clap-config.cmake to search path
+    list(APPEND CMAKE_PREFIX_PATH "${clap_SOURCE_DIR}/API/cmake/modules")
 
-FetchContent_MakeAvailable(CLAP)
+    find_package(CLAP REQUIRED)
+endif()
 
-# Some build environments like petalinux cannot properly find the CLAP package
-# unless the path is explicitly added to the CMAKE_FIND_ROOT_PATH and CMAKE_MODULE_PATH
-list(PREPEND CMAKE_FIND_ROOT_PATH ${clap_SOURCE_DIR}/API)
-list(PREPEND CMAKE_MODULE_PATH ${clap_SOURCE_DIR}/API/cmake/modules)
-find_package(CLAP PATHS ${clap_SOURCE_DIR}/API/cmake/modules REQUIRED)
-
-include_directories(${CLAP_INCLUDE_DIRS})
 
 add_definitions(-DMODULE_NAME=${PROJECT_NAME})
 
@@ -48,7 +56,8 @@ if(DEFINED CLAPPY_VERSION)
 endif()
 
 pybind11_add_module(${PROJECT_NAME} src/CLAPPy.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${CLAP_LIBS})
+
+target_link_libraries(${PROJECT_NAME} PRIVATE CLAP::CLAP)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION CLAPPy)
 install(DIRECTORY CLAPPy/ DESTINATION CLAPPy)
