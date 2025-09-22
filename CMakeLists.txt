@@ -19,12 +19,12 @@ set(PYBIND11_FINDPYTHON ON)
 # Try to find pybind11 quietly first
 find_package(pybind11 QUIET)
 if(NOT pybind11_FOUND)
-    message (STATUS "Could not find locally installed pybind11. Fetching it via FetchContent...")
+    message (STATUS "Could not find locally installed pybind11. Fetching it via FetchContent ...")
     include(FetchContent)
     FetchContent_Declare(
         pybind11
         GIT_REPOSITORY https://github.com/pybind/pybind11.git
-        GIT_TAG 0630807c3070287c716f6be3eacb00b8816b4215 # v2.11.1
+        GIT_TAG v2.13.6
     )
     FetchContent_MakeAvailable(pybind11)
 endif()
@@ -32,7 +32,7 @@ endif()
 # Try to find CLAP quietly first
 find_package(CLAP QUIET)
 if(NOT CLAP_FOUND)
-    message (STATUS "Could not find locally installed CLAP. Fetching it via FetchContent...")
+    message (STATUS "Could not find locally installed CLAP. Fetching it via FetchContent ...")
     include(FetchContent)
     FetchContent_Declare(
         CLAP
