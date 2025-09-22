@@ -7,7 +7,7 @@ if(NOT DEFINED CLAPPY_VERSION)
 		set(CLAPPY_VERSION ${SKBUILD_PROJECT_VERSION})
 	else()
 		# If not using skbuild, set a default version
-		set(CLAPPY_VERSION 0.1.11)
+		set(CLAPPY_VERSION 0.0.0)
 	endif()
 endif()
 
@@ -16,9 +16,10 @@ project(${PROJECT_NAME} LANGUAGES CXX VERSION ${CLAPPY_VERSION})
 # Use the new FindPython mode
 set(PYBIND11_FINDPYTHON ON)
 
-# Try to find pybind11 first
+# Try to find pybind11 quietly first
 find_package(pybind11 QUIET)
 if(NOT pybind11_FOUND)
+    message (STATUS "Could not find locally installed pybind11. Fetching it via FetchContent...")
     include(FetchContent)
     FetchContent_Declare(
         pybind11
@@ -31,20 +32,17 @@ endif()
 # Try to find CLAP quietly first
 find_package(CLAP QUIET)
 if(NOT CLAP_FOUND)
-    message (STATUS "Could not find locally installed CLAP. Fetching CLAP via FetchContent...")
+    message (STATUS "Could not find locally installed CLAP. Fetching it via FetchContent...")
     include(FetchContent)
     FetchContent_Declare(
         CLAP
-        GIT_REPOSITORY https://github.com/fporrmann/CLAP.git
-        GIT_TAG master
+        GIT_REPOSITORY https://github.com/mkaiser/CLAP.git
+        GIT_TAG cmake_improvements
     )
     FetchContent_MakeAvailable(CLAP)
 
-    # append path to clap-config.cmake to search path
-    # message(STATUS "clap_SOURCE_DIR: ${clap_SOURCE_DIR}")
+    # Append path to clap-config.cmake to search path
     list(APPEND CMAKE_PREFIX_PATH "${clap_SOURCE_DIR}/API/cmake/modules")
-
-    # message (STATUS "CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
 
     find_package(CLAP REQUIRED)
 endif()
@@ -57,9 +55,7 @@ if(DEFINED CLAPPY_VERSION)
 	add_definitions(-DCLAPPY_VERSION=${CLAPPY_VERSION})
 endif()
 
-pybind11_add_module(${PROJECT_NAME} 
-    src/CLAPPy.cpp
-)
+pybind11_add_module(${PROJECT_NAME} src/CLAPPy.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE CLAP::CLAP)
 
