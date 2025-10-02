@@ -58,5 +58,22 @@ pybind11_add_module(${PROJECT_NAME} src/CLAPPy.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE CLAP::CLAP)
 
+if (CMAKE_CROSSCOMPILING)
+	# If compiled by a yocto recipe, the Python installation of the host is used, which
+	# causes the suffix to contain the host ABI (e.g., cpython-310-x86_64-linux-gnu).
+	# However, in case of such a cross-compilation for yocto, the target is an ARM system.
+	# Therefore, CMake needs to determine the suffix based on the current configuration
+	# instead of the Python environment
+	find_package(Python3 COMPONENTS Interpreter QUIET)
+
+	# Construct output suffix
+	set(NEW_SUFFIX ".cpython-${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}-${CMAKE_C_COMPILER}.so")
+	message(STATUS "Setting output suffix to ${NEW_SUFFIX}")
+
+	set_target_properties(${PROJECT_NAME} PROPERTIES
+		SUFFIX "${NEW_SUFFIX}"
+	)
+endif()
+
 install(TARGETS ${PROJECT_NAME} DESTINATION CLAPPy)
 install(DIRECTORY CLAPPy/ DESTINATION CLAPPy)
