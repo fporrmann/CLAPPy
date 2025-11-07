@@ -46,56 +46,77 @@ namespace py = pybind11;
 // TODO: Look into Buffer protocol
 
 // Macro to bind common methods for any vector type
-#define BIND_VECTOR_COMMON_METHODS(vec_type)                                                                             \
-	.def("size", &vec_type::size)                                                                                        \
-		.def("append", [](vec_type &v, typename vec_type::value_type item) { v.push_back(item); })                       \
-		.def("clear", &vec_type::clear)                                                                                  \
-		.def("extend", [](vec_type &v, const vec_type &other) { v.insert(v.end(), other.begin(), other.end()); })        \
-		.def("pop", [](vec_type &v) {                                                                                    \
-			if (v.empty())                                                                                               \
-				throw std::out_of_range("pop from empty vector");                                                        \
-			typename vec_type::value_type item = v.back();                                                               \
-			v.pop_back();                                                                                                \
-			return item;                                                                                                 \
-		})                                                                                                               \
-		.def("insert", [](vec_type &v, size_t index, typename vec_type::value_type item) {                               \
-			if (index > v.size())                                                                                        \
-				throw std::out_of_range("inser index out of range");                                                     \
-			v.insert(v.begin() + index, item);                                                                           \
-		})                                                                                                               \
-		.def("remove", [](vec_type &v, typename vec_type::value_type item) {                                             \
-			auto it = std::find(v.begin(), v.end(), item);                                                               \
-			if (it != v.end())                                                                                           \
-				v.erase(it);                                                                                             \
-			else                                                                                                         \
-				throw std::invalid_argument("value to remove not found in vector");                                      \
-		})                                                                                                               \
-		.def("sort", [](vec_type &v) { std::sort(v.begin(), v.end()); })                                                 \
-		.def("resize", [](vec_type &v, size_t new_size) { v.resize(new_size); })                                         \
-		.def("__contains__", [](const vec_type &v, typename vec_type::value_type item) {                                 \
-			return std::find(v.begin(), v.end(), item) != v.end();                                                       \
-		})                                                                                                               \
-		.def(                                                                                                            \
-			"__iter__", [](const vec_type &v) { return py::make_iterator(v.begin(), v.end()); }, py::keep_alive<0, 1>()) \
-		.def("__repr__", [](const vec_type &v) {                                                                         \
-			std::stringstream ss;                                                                                        \
-			ss << "[";                                                                                                   \
-			for (size_t i = 0; i < v.size(); ++i)                                                                        \
-			{                                                                                                            \
-				if (i > 0) ss << ", ";                                                                                   \
-				if(sizeof(typename vec_type::value_type) == 1 && std::is_integral<typename vec_type::value_type>::value) \
-					ss << static_cast<int>(v[i]);                                                                        \
-				else                                                                                                     \
-					ss << v[i];                                                                                          \
-			}                                                                                                            \
-			ss << "]";                                                                                                   \
-			return ss.str();                                                                                             \
-		})                                                                                                               \
+#define BIND_VECTOR_COMMON_METHODS(vec_type)                                                                              \
+	.def(py::init<>())                                                                                                    \
+		.def(                                                                                                             \
+			"__bool__", [](const vec_type &v) -> bool { return !v.empty(); },                                             \
+			"Check whether the list is nonempty")                                                                         \
+		.def(                                                                                                             \
+			"count",                                                                                                      \
+			[](const vec_type &v, const typename vec_type::value_type &x) { return std::count(v.begin(), v.end(), x); },  \
+			py::arg("x"),                                                                                                 \
+			"Return the number of times ``x`` appears in the list")                                                       \
+		.def("size", &vec_type::size)                                                                                     \
+		.def("append", [](vec_type &v, const typename vec_type::value_type &item) { v.push_back(item); })                 \
+		.def("clear", &vec_type::clear)                                                                                   \
+		.def("extend", [](vec_type &v, const vec_type &other) { v.insert(v.end(), other.begin(), other.end()); })         \
+		.def("pop", [](vec_type &v) {                                                                                     \
+			if (v.empty())                                                                                                \
+				throw std::out_of_range("pop from empty vector");                                                         \
+			typename vec_type::value_type item = v.back();                                                                \
+			v.pop_back();                                                                                                 \
+			return item;                                                                                                  \
+		})                                                                                                                \
+		.def("__getitem__", [](const vec_type &v, size_t i) {                                                             \
+			if (i >= v.size()) throw py::index_error();                                                                   \
+			return v[i];                                                                                                  \
+		})                                                                                                                \
+		.def("__setitem__", [](vec_type &v, size_t i, const typename vec_type::value_type &item) {                        \
+			if (i >= v.size()) throw py::index_error();                                                                   \
+			v[i] = item;                                                                                                  \
+		})                                                                                                                \
+		.def("__delitem__", [](vec_type &v, size_t i) {                                                                   \
+			if (i >= v.size()) throw py::index_error();                                                                   \
+			v.erase(v.begin() + i);                                                                                       \
+		})                                                                                                                \
+		.def("insert", [](vec_type &v, size_t index, const typename vec_type::value_type &item) {                         \
+			if (index > v.size())                                                                                         \
+				throw std::out_of_range("inser index out of range");                                                      \
+			v.insert(v.begin() + index, item);                                                                            \
+		})                                                                                                                \
+		.def("remove", [](vec_type &v, const typename vec_type::value_type &item) {                                       \
+			auto it = std::find(v.begin(), v.end(), item);                                                                \
+			if (it != v.end())                                                                                            \
+				v.erase(it);                                                                                              \
+			else                                                                                                          \
+				throw std::invalid_argument("value to remove not found in vector");                                       \
+		})                                                                                                                \
+		.def("sort", [](vec_type &v) { std::sort(v.begin(), v.end()); })                                                  \
+		.def("resize", [](vec_type &v, size_t new_size) { v.resize(new_size); })                                          \
+		.def("__contains__", [](const vec_type &v, typename vec_type::value_type item) {                                  \
+			return std::find(v.begin(), v.end(), item) != v.end();                                                        \
+		})                                                                                                                \
+		.def(                                                                                                             \
+			"__iter__", [](const vec_type &v) { return py::make_iterator(v.begin(), v.end()); }, py::keep_alive<0, 1>())  \
+		.def("__repr__", [](const vec_type &v) {                                                                          \
+			std::stringstream ss;                                                                                         \
+			ss << "[";                                                                                                    \
+			for (size_t i = 0; i < v.size(); ++i)                                                                         \
+			{                                                                                                             \
+				if (i > 0) ss << ", ";                                                                                    \
+				if (sizeof(typename vec_type::value_type) == 1 && std::is_integral<typename vec_type::value_type>::value) \
+					ss << static_cast<int>(v[i]);                                                                         \
+				else                                                                                                      \
+					ss << v[i];                                                                                           \
+			}                                                                                                             \
+			ss << "]";                                                                                                    \
+			return ss.str();                                                                                              \
+		})                                                                                                                \
 		.def("__len__", &vec_type::size)
 
 // Macro to bind the vector type and its common methods
 #define BIND_VECTOR(m, vec_type, name) \
-	py::bind_vector<vec_type>(m, name) \
+	py::class_<vec_type>(m, name)      \
 		BIND_VECTOR_COMMON_METHODS(vec_type)
 
 template<typename T>
@@ -326,9 +347,8 @@ PYBIND11_MODULE(MODULE_NAME, m)
 		.def("AllocMemoryDDR", py::overload_cast<const uint64_t &, const int32_t &>(&clap::CLAP::AllocMemoryDDR<clap::MemoryPtr>), py::arg("byteSize"), py::arg("memIdx") = -1)
 		.def("AllocMemoryBRAM", py::overload_cast<const uint64_t &, const std::size_t &, const int32_t &>(&clap::CLAP::AllocMemoryBRAM<clap::MemoryPtr>), py::arg("elements"), py::arg("sizeOfElement"), py::arg("memIdx") = -1)
 		.def("AllocMemoryBRAM", py::overload_cast<const uint64_t &, const int32_t &>(&clap::CLAP::AllocMemoryBRAM<clap::MemoryPtr>), py::arg("byteSize"), py::arg("memIdx") = -1)
-    .def("AllocMemory", py::overload_cast<const clap::CLAP::MemoryType &, const uint64_t &, const std::size_t &, const int32_t &>(&clap::CLAP::AllocMemory<clap::MemoryPtr>), py::arg("type"), py::arg("elements"), py::arg("sizeOfElement"), py::arg("memIdx") = -1)
-    .def("AllocMemory", py::overload_cast<const clap::CLAP::MemoryType &, const uint64_t &, const int32_t &>(&clap::CLAP::AllocMemory<clap::MemoryPtr>), py::arg("type"), py::arg("byteSize"), py::arg("memIdx") = -1)
-
+		.def("AllocMemory", py::overload_cast<const clap::CLAP::MemoryType &, const uint64_t &, const std::size_t &, const int32_t &>(&clap::CLAP::AllocMemory<clap::MemoryPtr>), py::arg("type"), py::arg("elements"), py::arg("sizeOfElement"), py::arg("memIdx") = -1)
+		.def("AllocMemory", py::overload_cast<const clap::CLAP::MemoryType &, const uint64_t &, const int32_t &>(&clap::CLAP::AllocMemory<clap::MemoryPtr>), py::arg("type"), py::arg("byteSize"), py::arg("memIdx") = -1)
 
 		.def("FreeMemory", &clap::CLAP::FreeMemory, py::arg("mem"))
 		//////////////////////////////////////
