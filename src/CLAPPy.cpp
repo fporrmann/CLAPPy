@@ -46,155 +46,184 @@ namespace py = pybind11;
 // TODO: Look into Buffer protocol
 
 // Macro to bind common methods for any vector type
-#define BIND_VECTOR_COMMON_METHODS(vec_type)                                                                                                               \
-	.def(py::init<>())                                                                                                                                     \
-		.def(py::init([](const py::iterable &it) {                                                                                                         \
-			auto v = std::unique_ptr<vec_type>(new vec_type());                                                                                            \
-			v->reserve(py::len_hint(it));                                                                                                                  \
-			for (py::handle h : it)                                                                                                                        \
-				v->push_back(h.cast<typename vec_type::value_type>());                                                                                     \
-			return v.release();                                                                                                                            \
-		}))                                                                                                                                                \
-		.def(                                                                                                                                              \
-			"__bool__", [](const vec_type &v) -> bool { return !v.empty(); },                                                                              \
-			"Check whether the list is nonempty")                                                                                                          \
-		.def(                                                                                                                                              \
-			"count",                                                                                                                                       \
-			[](const vec_type &v, const typename vec_type::value_type &x) { return std::count(v.begin(), v.end(), x); },                                   \
-			py::arg("x"),                                                                                                                                  \
-			"Return the number of times ``x`` appears in the list")                                                                                        \
-		.def("size", &vec_type::size)                                                                                                                      \
-		.def("append", [](vec_type &v, const typename vec_type::value_type &item) { v.push_back(item); })                                                  \
-		.def("clear", &vec_type::clear)                                                                                                                    \
-		.def("extend", [](vec_type &v, const vec_type &other) { v.insert(v.end(), other.begin(), other.end()); })                                          \
-		.def(                                                                                                                                              \
-			"extend",                                                                                                                                      \
-			[](vec_type &v, const py::iterable &it) {                                                                                                      \
-				const size_t old_size = v.size();                                                                                                          \
-				v.reserve(old_size + len_hint(it));                                                                                                        \
-				try                                                                                                                                        \
-				{                                                                                                                                          \
-					for (py::handle h : it)                                                                                                                \
-						v.push_back(h.cast<typename vec_type::value_type>());                                                                              \
-				}                                                                                                                                          \
-				catch (const py::cast_error &)                                                                                                             \
-				{                                                                                                                                          \
-					v.erase(v.begin() + static_cast<typename vec_type::difference_type>(old_size), v.end());                                               \
-					try                                                                                                                                    \
-					{                                                                                                                                      \
-						v.shrink_to_fit();                                                                                                                 \
-					}                                                                                                                                      \
-					catch (const std::exception &)                                                                                                         \
-					{                                                                                                                                      \
-					}                                                                                                                                      \
-					throw;                                                                                                                                 \
-				}                                                                                                                                          \
-			},                                                                                                                                             \
-			py::arg("L"),                                                                                                                                  \
-			"Extend the list by appending all the items in the given list")                                                                                \
-		.def("pop", [](vec_type &v) {                                                                                                                      \
-			if (v.empty())                                                                                                                                 \
-				throw std::out_of_range("pop from empty vector");                                                                                          \
-			typename vec_type::value_type item = v.back();                                                                                                 \
-			v.pop_back();                                                                                                                                  \
-			return item;                                                                                                                                   \
-		})                                                                                                                                                 \
-		.def("__getitem__", [](const vec_type &v, const size_t &i) {                                                                                       \
-			if (i >= v.size()) throw py::index_error();                                                                                                    \
-			return v[i];                                                                                                                                   \
-		})                                                                                                                                                 \
-		.def(                                                                                                                                              \
-			"__getitem__", [](const vec_type &v, const py::slice &slice) -> vec_type * {                                                                   \
-				size_t start = 0, stop = 0, step = 0, slicelength = 0;                                                                                     \
-				if (!slice.compute(v.size(), &start, &stop, &step, &slicelength))                                                                          \
-					throw py::error_already_set();                                                                                                         \
-				auto *seq = new vec_type();                                                                                                                \
-				seq->reserve((size_t)slicelength);                                                                                                         \
-				for (size_t i = 0; i < slicelength; ++i)                                                                                                   \
-				{                                                                                                                                          \
-					seq->push_back(v[start]);                                                                                                              \
-					start += step;                                                                                                                         \
-				}                                                                                                                                          \
-				return seq;                                                                                                                                \
-			},                                                                                                                                             \
-			py::arg("s"), "Retrieve list elements using a slice object")                                                                                   \
-		.def("__setitem__", [](vec_type &v, const size_t &i, const typename vec_type::value_type &item) {                                                  \
-			if (i >= v.size()) throw py::index_error();                                                                                                    \
-			v[i] = item;                                                                                                                                   \
-		})                                                                                                                                                 \
-		.def(                                                                                                                                              \
-			"__setitem__", [](vec_type &v, const py::slice &slice, const vec_type &value) {                                                                \
-				size_t start = 0, stop = 0, step = 0, slicelength = 0;                                                                                     \
-				if (!slice.compute(v.size(), &start, &stop, &step, &slicelength))                                                                          \
-					throw py::error_already_set();                                                                                                         \
-				if (slicelength != value.size())                                                                                                           \
-					throw std::runtime_error("Left and right hand size of slice assignment have different sizes!");                                        \
-				for (size_t i = 0; i < slicelength; ++i)                                                                                                   \
-				{                                                                                                                                          \
-					v[start] = value[i];                                                                                                                   \
-					start += step;                                                                                                                         \
-				}                                                                                                                                          \
-			},                                                                                                                                             \
-			"Assign list elements using a slice object")                                                                                                   \
-		.def("__delitem__", [](vec_type &v, const size_t &i) {                                                                                             \
-			if (i >= v.size()) throw py::index_error();                                                                                                    \
-			v.erase(v.begin() + i);                                                                                                                        \
-		})                                                                                                                                                 \
-		.def(                                                                                                                                              \
-			"__delitem__", [](vec_type &v, const py::slice &slice) {                                                                                       \
-				size_t start = 0, stop = 0, step = 0, slicelength = 0;                                                                                     \
-				if (!slice.compute(v.size(), &start, &stop, &step, &slicelength))                                                                          \
-					throw py::error_already_set();                                                                                                         \
-				if (step == 1 && false)                                                                                                                    \
-					v.erase(v.begin() + (typename vec_type::difference_type)start, v.begin() + (typename vec_type::difference_type)(start + slicelength)); \
-				else                                                                                                                                       \
-				{                                                                                                                                          \
-					for (size_t i = 0; i < slicelength; ++i)                                                                                               \
-					{                                                                                                                                      \
-						v.erase(v.begin() + (typename vec_type::difference_type)start);                                                                    \
-						start += step - 1;                                                                                                                 \
-					}                                                                                                                                      \
-				}                                                                                                                                          \
-			},                                                                                                                                             \
-			"Delete list elements using a slice object")                                                                                                   \
-		.def("insert", [](vec_type &v, const size_t &index, const typename vec_type::value_type &item) {                                                   \
-			if (index > v.size())                                                                                                                          \
-				throw std::out_of_range("inser index out of range");                                                                                       \
-			v.insert(v.begin() + index, item);                                                                                                             \
-		})                                                                                                                                                 \
-		.def("remove", [](vec_type &v, const typename vec_type::value_type &item) {                                                                        \
-			auto it = std::find(v.begin(), v.end(), item);                                                                                                 \
-			if (it != v.end())                                                                                                                             \
-				v.erase(it);                                                                                                                               \
-			else                                                                                                                                           \
-				throw std::invalid_argument("value to remove not found in vector");                                                                        \
-		})                                                                                                                                                 \
-		.def("sort", [](vec_type &v) { std::sort(v.begin(), v.end()); })                                                                                   \
-		.def("resize", [](vec_type &v, size_t new_size) { v.resize(new_size); })                                                                           \
-		.def("__contains__", [](const vec_type &v, typename vec_type::value_type item) {                                                                   \
-			return std::find(v.begin(), v.end(), item) != v.end();                                                                                         \
-		})                                                                                                                                                 \
-		.def(                                                                                                                                              \
-			"__iter__", [](const vec_type &v) { return py::make_iterator(v.begin(), v.end()); }, py::keep_alive<0, 1>())                                   \
-		.def("__repr__", [](const vec_type &v) {                                                                                                           \
-			std::stringstream ss;                                                                                                                          \
-			ss << "[";                                                                                                                                     \
-			for (size_t i = 0; i < v.size(); ++i)                                                                                                          \
-			{                                                                                                                                              \
-				if (i > 0) ss << ", ";                                                                                                                     \
-				if (sizeof(typename vec_type::value_type) == 1 && std::is_integral<typename vec_type::value_type>::value)                                  \
-					ss << static_cast<int>(v[i]);                                                                                                          \
-				else                                                                                                                                       \
-					ss << v[i];                                                                                                                            \
-			}                                                                                                                                              \
-			ss << "]";                                                                                                                                     \
-			return ss.str();                                                                                                                               \
-		})                                                                                                                                                 \
-		.def("__len__", &vec_type::size)
+#define BIND_VECTOR_COMMON_METHODS(vec_type, vec_value_type, vec_diff_type)                                              \
+	.def(py::init<>())                                                                                                   \
+		.def(py::init<const vec_type &>(), "Copy constructor")                                                           \
+		.def(py::init([](const py::iterable &it) {                                                                       \
+			auto v = std::unique_ptr<vec_type>(new vec_type());                                                          \
+			v->reserve(py::len_hint(it));                                                                                \
+			for (py::handle h : it)                                                                                      \
+				v->push_back(h.cast<vec_value_type>());                                                                  \
+			return v.release();                                                                                          \
+		}))                                                                                                              \
+		.def(                                                                                                            \
+			"__bool__", [](const vec_type &v) -> bool { return !v.empty(); },                                            \
+			"Check whether the list is nonempty")                                                                        \
+		.def(                                                                                                            \
+			"count",                                                                                                     \
+			[](const vec_type &v, const vec_value_type &x) { return std::count(v.begin(), v.end(), x); },                \
+			py::arg("x"),                                                                                                \
+			"Return the number of times ``x`` appears in the list")                                                      \
+		.def("size", &vec_type::size)                                                                                    \
+		.def(                                                                                                            \
+			"append", [](vec_type &v, const vec_value_type &item) { v.push_back(item); }, py::arg("x"),                  \
+			"Add an item to the end of the list")                                                                        \
+		.def("clear", &vec_type::clear, "Clear the contents")                                                            \
+		.def(                                                                                                            \
+			"extend", [](vec_type &v, const vec_type &other) { v.insert(v.end(), other.begin(), other.end()); },         \
+			py::arg("L"),                                                                                                \
+			"Extend the list by appending all the items in the given list")                                              \
+		.def(                                                                                                            \
+			"extend",                                                                                                    \
+			[](vec_type &v, const py::iterable &it) {                                                                    \
+				const size_t old_size = v.size();                                                                        \
+				v.reserve(old_size + len_hint(it));                                                                      \
+				try                                                                                                      \
+				{                                                                                                        \
+					for (py::handle h : it)                                                                              \
+						v.push_back(h.cast<vec_value_type>());                                                           \
+				}                                                                                                        \
+				catch (const py::cast_error &)                                                                           \
+				{                                                                                                        \
+					v.erase(v.begin() + static_cast<vec_diff_type>(old_size), v.end());                                  \
+					try                                                                                                  \
+					{                                                                                                    \
+						v.shrink_to_fit();                                                                               \
+					}                                                                                                    \
+					catch (const std::exception &)                                                                       \
+					{                                                                                                    \
+					}                                                                                                    \
+					throw;                                                                                               \
+				}                                                                                                        \
+			},                                                                                                           \
+			py::arg("L"),                                                                                                \
+			"Extend the list by appending all the items in the given list")                                              \
+		.def(                                                                                                            \
+			"pop", [](vec_type &v) {                                                                                     \
+				if (v.empty())                                                                                           \
+					throw py::index_error("pop from empty vector");                                                      \
+				vec_value_type item = v.back();                                                                          \
+				v.pop_back();                                                                                            \
+				return item;                                                                                             \
+			},                                                                                                           \
+			"Remove and return the last item")                                                                           \
+		.def(                                                                                                            \
+			"pop", [](vec_type &v, const vec_diff_type &i) {                                                             \
+				if (i >= v.size()) throw py::index_error();                                                              \
+				vec_value_type item = v[i];                                                                              \
+				v.erase(v.begin() + (vec_diff_type)i);                                                                   \
+				return item;                                                                                             \
+			},                                                                                                           \
+			py::arg("i"), "Remove and return the item at index ``i``")                                                   \
+		.def(                                                                                                            \
+			"__getitem__", [](const vec_type &v, const py::slice &slice) -> vec_type * {                                 \
+				size_t start = 0, stop = 0, step = 0, slicelength = 0;                                                   \
+				if (!slice.compute(v.size(), &start, &stop, &step, &slicelength))                                        \
+					throw py::error_already_set();                                                                       \
+				auto *seq = new vec_type();                                                                              \
+				seq->reserve((size_t)slicelength);                                                                       \
+				for (size_t i = 0; i < slicelength; ++i)                                                                 \
+				{                                                                                                        \
+					seq->push_back(v[start]);                                                                            \
+					start += step;                                                                                       \
+				}                                                                                                        \
+				return seq;                                                                                              \
+			},                                                                                                           \
+			py::arg("s"), "Retrieve list elements using a slice object")                                                 \
+		.def("__getitem__", [](const vec_type &v, const vec_diff_type &i) {                                              \
+			if (i >= v.size()) throw py::index_error();                                                                  \
+			return v[i];                                                                                                 \
+		})                                                                                                               \
+		.def("__setitem__", [](vec_type &v, const size_t &i, const vec_value_type &item) {                               \
+			if (i >= v.size()) throw py::index_error();                                                                  \
+			v[i] = item;                                                                                                 \
+		})                                                                                                               \
+		.def(                                                                                                            \
+			"__setitem__", [](vec_type &v, const py::slice &slice, const vec_type &value) {                              \
+				size_t start = 0, stop = 0, step = 0, slicelength = 0;                                                   \
+				if (!slice.compute(v.size(), &start, &stop, &step, &slicelength))                                        \
+					throw py::error_already_set();                                                                       \
+				if (slicelength != value.size())                                                                         \
+					throw std::runtime_error("Left and right hand size of slice assignment have different sizes!");      \
+				for (size_t i = 0; i < slicelength; ++i)                                                                 \
+				{                                                                                                        \
+					v[start] = value[i];                                                                                 \
+					start += step;                                                                                       \
+				}                                                                                                        \
+			},                                                                                                           \
+			"Assign list elements using a slice object")                                                                 \
+		.def(                                                                                                            \
+			"__delitem__", [](vec_type &v, const size_t &i) {                                                            \
+				if (i >= v.size()) throw py::index_error();                                                              \
+				v.erase(v.begin() + i);                                                                                  \
+			},                                                                                                           \
+			"Delete the list elements at index ``i``")                                                                   \
+		.def(                                                                                                            \
+			"__delitem__", [](vec_type &v, const py::slice &slice) {                                                     \
+				size_t start = 0, stop = 0, step = 0, slicelength = 0;                                                   \
+				if (!slice.compute(v.size(), &start, &stop, &step, &slicelength))                                        \
+					throw py::error_already_set();                                                                       \
+				if (step == 1 && false)                                                                                  \
+					v.erase(v.begin() + (vec_diff_type)start, v.begin() + (vec_diff_type)(start + slicelength));         \
+				else                                                                                                     \
+				{                                                                                                        \
+					for (size_t i = 0; i < slicelength; ++i)                                                             \
+					{                                                                                                    \
+						v.erase(v.begin() + (vec_diff_type)start);                                                       \
+						start += step - 1;                                                                               \
+					}                                                                                                    \
+				}                                                                                                        \
+			},                                                                                                           \
+			"Delete list elements using a slice object")                                                                 \
+		.def(                                                                                                            \
+			"insert", [](vec_type &v, const vec_diff_type &index, const vec_value_type &item) {                          \
+				if (index > v.size())                                                                                    \
+					throw py::index_error("insert index out of range");                                                  \
+				v.insert(v.begin() + index, item);                                                                       \
+			},                                                                                                           \
+			py::arg("i"), py::arg("x"), "Insert an item at a given position.")                                           \
+		.def(                                                                                                            \
+			"remove", [](vec_type &v, const vec_value_type &x) {                                                         \
+				auto it = std::find(v.begin(), v.end(), x);                                                              \
+				if (it != v.end())                                                                                       \
+					v.erase(it);                                                                                         \
+				else                                                                                                     \
+					throw py::value_error("value to remove not found in vector");                                        \
+			},                                                                                                           \
+			py::arg("x"), "Remove the first item from the list whose value is x. "                                       \
+						  "It is an error if there is no such item.")                                                    \
+		.def("sort", [](vec_type &v) { std::sort(v.begin(), v.end()); })                                                 \
+		.def("resize", [](vec_type &v, size_t new_size) { v.resize(new_size); })                                         \
+		.def(                                                                                                            \
+			"__contains__", [](const vec_type &v, const vec_value_type &item) {                                          \
+				return std::find(v.begin(), v.end(), item) != v.end();                                                   \
+			},                                                                                                           \
+			py::arg("x"), "Return true the container contains ``x``")                                                    \
+		.def(                                                                                                            \
+			"__iter__", [](const vec_type &v) { return py::make_iterator(v.begin(), v.end()); }, py::keep_alive<0, 1>()) \
+		.def(                                                                                                            \
+			"__repr__", [](const vec_type &v) {                                                                          \
+				std::stringstream ss;                                                                                    \
+				ss << "[";                                                                                               \
+				for (size_t i = 0; i < v.size(); ++i)                                                                    \
+				{                                                                                                        \
+					if (i > 0) ss << ", ";                                                                               \
+					if (sizeof(vec_type::value_type) == 1 && std::is_integral<vec_value_type>::value)                    \
+						ss << static_cast<int>(v[i]);                                                                    \
+					else                                                                                                 \
+						ss << v[i];                                                                                      \
+				}                                                                                                        \
+				ss << "]";                                                                                               \
+				return ss.str();                                                                                         \
+			},                                                                                                           \
+			"Return the canonical string representation of this list.")                                                  \
+		.def("__len__", &vec_type::size)                                                                                 \
+		.def("__eq__", [](const vec_type &a, const vec_type &b) { return a == b; })                                      \
+		.def("__ne__", [](const vec_type &a, const vec_type &b) { return a != b; })
 // Macro to bind the vector type and its common methods
 #define BIND_VECTOR(m, vec_type, name) \
 	py::class_<vec_type>(m, name)      \
-		BIND_VECTOR_COMMON_METHODS(vec_type)
+		BIND_VECTOR_COMMON_METHODS(vec_type, typename vec_type::value_type, typename vec_type::difference_type)
 
 template<typename T>
 void defRWTemplate(py::class_<clap::CLAP, clap::CLAPPtr> &c, const bool &isSigned = false)

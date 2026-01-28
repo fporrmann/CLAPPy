@@ -517,6 +517,12 @@ class CLAP:
     def AddMemoryRegion(self, type: CLAP.MemoryType, baseAddr: int, size: int) -> None:
         ...
     @typing.overload
+    def AllocMemory(self, type: CLAP.MemoryType, elements: int, sizeOfElement: int, memIdx: int = -1) -> Memory:
+        ...
+    @typing.overload
+    def AllocMemory(self, type: CLAP.MemoryType, byteSize: int, memIdx: int = -1) -> Memory:
+        ...
+    @typing.overload
     def AllocMemoryBRAM(self, elements: int, sizeOfElement: int, memIdx: int = -1) -> Memory:
         ...
     @typing.overload
@@ -704,14 +710,10 @@ class CLAPBuffer16s:
         """
         Check whether the list is nonempty
         """
-    @typing.overload
     def __contains__(self, x: int) -> bool:
         """
         Return true the container contains ``x``
         """
-    @typing.overload
-    def __contains__(self, arg0: int) -> bool:
-        ...
     @typing.overload
     def __delitem__(self, arg0: int) -> None:
         """
@@ -743,28 +745,16 @@ class CLAPBuffer16s:
     @typing.overload
     def __init__(self, arg0: typing.Iterable) -> None:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
+    def __iter__(self) -> typing.Iterator[int]:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
-        ...
-    @typing.overload
-    def __len__(self) -> int:
-        ...
-    @typing.overload
     def __len__(self) -> int:
         ...
     def __ne__(self, arg0: CLAPBuffer16s) -> bool:
         ...
-    @typing.overload
     def __repr__(self) -> str:
         """
         Return the canonical string representation of this list.
         """
-    @typing.overload
-    def __repr__(self) -> str:
-        ...
     @typing.overload
     def __setitem__(self, arg0: int, arg1: int) -> None:
         ...
@@ -773,22 +763,14 @@ class CLAPBuffer16s:
         """
         Assign list elements using a slice object
         """
-    @typing.overload
     def append(self, x: int) -> None:
         """
         Add an item to the end of the list
         """
-    @typing.overload
-    def append(self, arg0: int) -> None:
-        ...
-    @typing.overload
     def clear(self) -> None:
         """
         Clear the contents
         """
-    @typing.overload
-    def clear(self) -> None:
-        ...
     def count(self, x: int) -> int:
         """
         Return the number of times ``x`` appears in the list
@@ -803,17 +785,10 @@ class CLAPBuffer16s:
         """
         Extend the list by appending all the items in the given list
         """
-    @typing.overload
-    def extend(self, arg0: CLAPBuffer16s) -> None:
-        ...
-    @typing.overload
     def insert(self, i: int, x: int) -> None:
         """
         Insert an item at a given position.
         """
-    @typing.overload
-    def insert(self, arg0: int, arg1: int) -> None:
-        ...
     @typing.overload
     def pop(self) -> int:
         """
@@ -824,17 +799,10 @@ class CLAPBuffer16s:
         """
         Remove and return the item at index ``i``
         """
-    @typing.overload
-    def pop(self) -> int:
-        ...
-    @typing.overload
     def remove(self, x: int) -> None:
         """
         Remove the first item from the list whose value is x. It is an error if there is no such item.
         """
-    @typing.overload
-    def remove(self, arg0: int) -> None:
-        ...
     def resize(self, arg0: int) -> None:
         ...
     def size(self) -> int:
@@ -847,14 +815,10 @@ class CLAPBuffer16u:
         """
         Check whether the list is nonempty
         """
-    @typing.overload
     def __contains__(self, x: int) -> bool:
         """
         Return true the container contains ``x``
         """
-    @typing.overload
-    def __contains__(self, arg0: int) -> bool:
-        ...
     @typing.overload
     def __delitem__(self, arg0: int) -> None:
         """
@@ -886,28 +850,16 @@ class CLAPBuffer16u:
     @typing.overload
     def __init__(self, arg0: typing.Iterable) -> None:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
+    def __iter__(self) -> typing.Iterator[int]:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
-        ...
-    @typing.overload
-    def __len__(self) -> int:
-        ...
-    @typing.overload
     def __len__(self) -> int:
         ...
     def __ne__(self, arg0: CLAPBuffer16u) -> bool:
         ...
-    @typing.overload
     def __repr__(self) -> str:
         """
         Return the canonical string representation of this list.
         """
-    @typing.overload
-    def __repr__(self) -> str:
-        ...
     @typing.overload
     def __setitem__(self, arg0: int, arg1: int) -> None:
         ...
@@ -916,22 +868,14 @@ class CLAPBuffer16u:
         """
         Assign list elements using a slice object
         """
-    @typing.overload
     def append(self, x: int) -> None:
         """
         Add an item to the end of the list
         """
-    @typing.overload
-    def append(self, arg0: int) -> None:
-        ...
-    @typing.overload
     def clear(self) -> None:
         """
         Clear the contents
         """
-    @typing.overload
-    def clear(self) -> None:
-        ...
     def count(self, x: int) -> int:
         """
         Return the number of times ``x`` appears in the list
@@ -946,17 +890,10 @@ class CLAPBuffer16u:
         """
         Extend the list by appending all the items in the given list
         """
-    @typing.overload
-    def extend(self, arg0: CLAPBuffer16u) -> None:
-        ...
-    @typing.overload
     def insert(self, i: int, x: int) -> None:
         """
         Insert an item at a given position.
         """
-    @typing.overload
-    def insert(self, arg0: int, arg1: int) -> None:
-        ...
     @typing.overload
     def pop(self) -> int:
         """
@@ -967,17 +904,10 @@ class CLAPBuffer16u:
         """
         Remove and return the item at index ``i``
         """
-    @typing.overload
-    def pop(self) -> int:
-        ...
-    @typing.overload
     def remove(self, x: int) -> None:
         """
         Remove the first item from the list whose value is x. It is an error if there is no such item.
         """
-    @typing.overload
-    def remove(self, arg0: int) -> None:
-        ...
     def resize(self, arg0: int) -> None:
         ...
     def size(self) -> int:
@@ -990,14 +920,10 @@ class CLAPBuffer32s:
         """
         Check whether the list is nonempty
         """
-    @typing.overload
     def __contains__(self, x: int) -> bool:
         """
         Return true the container contains ``x``
         """
-    @typing.overload
-    def __contains__(self, arg0: int) -> bool:
-        ...
     @typing.overload
     def __delitem__(self, arg0: int) -> None:
         """
@@ -1029,28 +955,16 @@ class CLAPBuffer32s:
     @typing.overload
     def __init__(self, arg0: typing.Iterable) -> None:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
+    def __iter__(self) -> typing.Iterator[int]:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
-        ...
-    @typing.overload
-    def __len__(self) -> int:
-        ...
-    @typing.overload
     def __len__(self) -> int:
         ...
     def __ne__(self, arg0: CLAPBuffer32s) -> bool:
         ...
-    @typing.overload
     def __repr__(self) -> str:
         """
         Return the canonical string representation of this list.
         """
-    @typing.overload
-    def __repr__(self) -> str:
-        ...
     @typing.overload
     def __setitem__(self, arg0: int, arg1: int) -> None:
         ...
@@ -1059,22 +973,14 @@ class CLAPBuffer32s:
         """
         Assign list elements using a slice object
         """
-    @typing.overload
     def append(self, x: int) -> None:
         """
         Add an item to the end of the list
         """
-    @typing.overload
-    def append(self, arg0: int) -> None:
-        ...
-    @typing.overload
     def clear(self) -> None:
         """
         Clear the contents
         """
-    @typing.overload
-    def clear(self) -> None:
-        ...
     def count(self, x: int) -> int:
         """
         Return the number of times ``x`` appears in the list
@@ -1089,17 +995,10 @@ class CLAPBuffer32s:
         """
         Extend the list by appending all the items in the given list
         """
-    @typing.overload
-    def extend(self, arg0: CLAPBuffer32s) -> None:
-        ...
-    @typing.overload
     def insert(self, i: int, x: int) -> None:
         """
         Insert an item at a given position.
         """
-    @typing.overload
-    def insert(self, arg0: int, arg1: int) -> None:
-        ...
     @typing.overload
     def pop(self) -> int:
         """
@@ -1110,17 +1009,10 @@ class CLAPBuffer32s:
         """
         Remove and return the item at index ``i``
         """
-    @typing.overload
-    def pop(self) -> int:
-        ...
-    @typing.overload
     def remove(self, x: int) -> None:
         """
         Remove the first item from the list whose value is x. It is an error if there is no such item.
         """
-    @typing.overload
-    def remove(self, arg0: int) -> None:
-        ...
     def resize(self, arg0: int) -> None:
         ...
     def size(self) -> int:
@@ -1133,14 +1025,10 @@ class CLAPBuffer32u:
         """
         Check whether the list is nonempty
         """
-    @typing.overload
     def __contains__(self, x: int) -> bool:
         """
         Return true the container contains ``x``
         """
-    @typing.overload
-    def __contains__(self, arg0: int) -> bool:
-        ...
     @typing.overload
     def __delitem__(self, arg0: int) -> None:
         """
@@ -1172,28 +1060,16 @@ class CLAPBuffer32u:
     @typing.overload
     def __init__(self, arg0: typing.Iterable) -> None:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
+    def __iter__(self) -> typing.Iterator[int]:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
-        ...
-    @typing.overload
-    def __len__(self) -> int:
-        ...
-    @typing.overload
     def __len__(self) -> int:
         ...
     def __ne__(self, arg0: CLAPBuffer32u) -> bool:
         ...
-    @typing.overload
     def __repr__(self) -> str:
         """
         Return the canonical string representation of this list.
         """
-    @typing.overload
-    def __repr__(self) -> str:
-        ...
     @typing.overload
     def __setitem__(self, arg0: int, arg1: int) -> None:
         ...
@@ -1202,22 +1078,14 @@ class CLAPBuffer32u:
         """
         Assign list elements using a slice object
         """
-    @typing.overload
     def append(self, x: int) -> None:
         """
         Add an item to the end of the list
         """
-    @typing.overload
-    def append(self, arg0: int) -> None:
-        ...
-    @typing.overload
     def clear(self) -> None:
         """
         Clear the contents
         """
-    @typing.overload
-    def clear(self) -> None:
-        ...
     def count(self, x: int) -> int:
         """
         Return the number of times ``x`` appears in the list
@@ -1232,17 +1100,10 @@ class CLAPBuffer32u:
         """
         Extend the list by appending all the items in the given list
         """
-    @typing.overload
-    def extend(self, arg0: CLAPBuffer32u) -> None:
-        ...
-    @typing.overload
     def insert(self, i: int, x: int) -> None:
         """
         Insert an item at a given position.
         """
-    @typing.overload
-    def insert(self, arg0: int, arg1: int) -> None:
-        ...
     @typing.overload
     def pop(self) -> int:
         """
@@ -1253,17 +1114,10 @@ class CLAPBuffer32u:
         """
         Remove and return the item at index ``i``
         """
-    @typing.overload
-    def pop(self) -> int:
-        ...
-    @typing.overload
     def remove(self, x: int) -> None:
         """
         Remove the first item from the list whose value is x. It is an error if there is no such item.
         """
-    @typing.overload
-    def remove(self, arg0: int) -> None:
-        ...
     def resize(self, arg0: int) -> None:
         ...
     def size(self) -> int:
@@ -1276,14 +1130,10 @@ class CLAPBuffer64s:
         """
         Check whether the list is nonempty
         """
-    @typing.overload
     def __contains__(self, x: int) -> bool:
         """
         Return true the container contains ``x``
         """
-    @typing.overload
-    def __contains__(self, arg0: int) -> bool:
-        ...
     @typing.overload
     def __delitem__(self, arg0: int) -> None:
         """
@@ -1315,28 +1165,16 @@ class CLAPBuffer64s:
     @typing.overload
     def __init__(self, arg0: typing.Iterable) -> None:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
+    def __iter__(self) -> typing.Iterator[int]:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
-        ...
-    @typing.overload
-    def __len__(self) -> int:
-        ...
-    @typing.overload
     def __len__(self) -> int:
         ...
     def __ne__(self, arg0: CLAPBuffer64s) -> bool:
         ...
-    @typing.overload
     def __repr__(self) -> str:
         """
         Return the canonical string representation of this list.
         """
-    @typing.overload
-    def __repr__(self) -> str:
-        ...
     @typing.overload
     def __setitem__(self, arg0: int, arg1: int) -> None:
         ...
@@ -1345,22 +1183,14 @@ class CLAPBuffer64s:
         """
         Assign list elements using a slice object
         """
-    @typing.overload
     def append(self, x: int) -> None:
         """
         Add an item to the end of the list
         """
-    @typing.overload
-    def append(self, arg0: int) -> None:
-        ...
-    @typing.overload
     def clear(self) -> None:
         """
         Clear the contents
         """
-    @typing.overload
-    def clear(self) -> None:
-        ...
     def count(self, x: int) -> int:
         """
         Return the number of times ``x`` appears in the list
@@ -1375,17 +1205,10 @@ class CLAPBuffer64s:
         """
         Extend the list by appending all the items in the given list
         """
-    @typing.overload
-    def extend(self, arg0: CLAPBuffer64s) -> None:
-        ...
-    @typing.overload
     def insert(self, i: int, x: int) -> None:
         """
         Insert an item at a given position.
         """
-    @typing.overload
-    def insert(self, arg0: int, arg1: int) -> None:
-        ...
     @typing.overload
     def pop(self) -> int:
         """
@@ -1396,17 +1219,10 @@ class CLAPBuffer64s:
         """
         Remove and return the item at index ``i``
         """
-    @typing.overload
-    def pop(self) -> int:
-        ...
-    @typing.overload
     def remove(self, x: int) -> None:
         """
         Remove the first item from the list whose value is x. It is an error if there is no such item.
         """
-    @typing.overload
-    def remove(self, arg0: int) -> None:
-        ...
     def resize(self, arg0: int) -> None:
         ...
     def size(self) -> int:
@@ -1419,14 +1235,10 @@ class CLAPBuffer64u:
         """
         Check whether the list is nonempty
         """
-    @typing.overload
     def __contains__(self, x: int) -> bool:
         """
         Return true the container contains ``x``
         """
-    @typing.overload
-    def __contains__(self, arg0: int) -> bool:
-        ...
     @typing.overload
     def __delitem__(self, arg0: int) -> None:
         """
@@ -1458,28 +1270,16 @@ class CLAPBuffer64u:
     @typing.overload
     def __init__(self, arg0: typing.Iterable) -> None:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
+    def __iter__(self) -> typing.Iterator[int]:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
-        ...
-    @typing.overload
-    def __len__(self) -> int:
-        ...
-    @typing.overload
     def __len__(self) -> int:
         ...
     def __ne__(self, arg0: CLAPBuffer64u) -> bool:
         ...
-    @typing.overload
     def __repr__(self) -> str:
         """
         Return the canonical string representation of this list.
         """
-    @typing.overload
-    def __repr__(self) -> str:
-        ...
     @typing.overload
     def __setitem__(self, arg0: int, arg1: int) -> None:
         ...
@@ -1488,22 +1288,14 @@ class CLAPBuffer64u:
         """
         Assign list elements using a slice object
         """
-    @typing.overload
     def append(self, x: int) -> None:
         """
         Add an item to the end of the list
         """
-    @typing.overload
-    def append(self, arg0: int) -> None:
-        ...
-    @typing.overload
     def clear(self) -> None:
         """
         Clear the contents
         """
-    @typing.overload
-    def clear(self) -> None:
-        ...
     def count(self, x: int) -> int:
         """
         Return the number of times ``x`` appears in the list
@@ -1518,17 +1310,10 @@ class CLAPBuffer64u:
         """
         Extend the list by appending all the items in the given list
         """
-    @typing.overload
-    def extend(self, arg0: CLAPBuffer64u) -> None:
-        ...
-    @typing.overload
     def insert(self, i: int, x: int) -> None:
         """
         Insert an item at a given position.
         """
-    @typing.overload
-    def insert(self, arg0: int, arg1: int) -> None:
-        ...
     @typing.overload
     def pop(self) -> int:
         """
@@ -1539,17 +1324,10 @@ class CLAPBuffer64u:
         """
         Remove and return the item at index ``i``
         """
-    @typing.overload
-    def pop(self) -> int:
-        ...
-    @typing.overload
     def remove(self, x: int) -> None:
         """
         Remove the first item from the list whose value is x. It is an error if there is no such item.
         """
-    @typing.overload
-    def remove(self, arg0: int) -> None:
-        ...
     def resize(self, arg0: int) -> None:
         ...
     def size(self) -> int:
@@ -1562,14 +1340,10 @@ class CLAPBuffer8s:
         """
         Check whether the list is nonempty
         """
-    @typing.overload
     def __contains__(self, x: int) -> bool:
         """
         Return true the container contains ``x``
         """
-    @typing.overload
-    def __contains__(self, arg0: int) -> bool:
-        ...
     @typing.overload
     def __delitem__(self, arg0: int) -> None:
         """
@@ -1601,28 +1375,16 @@ class CLAPBuffer8s:
     @typing.overload
     def __init__(self, arg0: typing.Iterable) -> None:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
+    def __iter__(self) -> typing.Iterator[int]:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
-        ...
-    @typing.overload
-    def __len__(self) -> int:
-        ...
-    @typing.overload
     def __len__(self) -> int:
         ...
     def __ne__(self, arg0: CLAPBuffer8s) -> bool:
         ...
-    @typing.overload
     def __repr__(self) -> str:
         """
         Return the canonical string representation of this list.
         """
-    @typing.overload
-    def __repr__(self) -> str:
-        ...
     @typing.overload
     def __setitem__(self, arg0: int, arg1: int) -> None:
         ...
@@ -1631,22 +1393,14 @@ class CLAPBuffer8s:
         """
         Assign list elements using a slice object
         """
-    @typing.overload
     def append(self, x: int) -> None:
         """
         Add an item to the end of the list
         """
-    @typing.overload
-    def append(self, arg0: int) -> None:
-        ...
-    @typing.overload
     def clear(self) -> None:
         """
         Clear the contents
         """
-    @typing.overload
-    def clear(self) -> None:
-        ...
     def count(self, x: int) -> int:
         """
         Return the number of times ``x`` appears in the list
@@ -1661,17 +1415,10 @@ class CLAPBuffer8s:
         """
         Extend the list by appending all the items in the given list
         """
-    @typing.overload
-    def extend(self, arg0: CLAPBuffer8s) -> None:
-        ...
-    @typing.overload
     def insert(self, i: int, x: int) -> None:
         """
         Insert an item at a given position.
         """
-    @typing.overload
-    def insert(self, arg0: int, arg1: int) -> None:
-        ...
     @typing.overload
     def pop(self) -> int:
         """
@@ -1682,17 +1429,10 @@ class CLAPBuffer8s:
         """
         Remove and return the item at index ``i``
         """
-    @typing.overload
-    def pop(self) -> int:
-        ...
-    @typing.overload
     def remove(self, x: int) -> None:
         """
         Remove the first item from the list whose value is x. It is an error if there is no such item.
         """
-    @typing.overload
-    def remove(self, arg0: int) -> None:
-        ...
     def resize(self, arg0: int) -> None:
         ...
     def size(self) -> int:
@@ -1705,14 +1445,10 @@ class CLAPBuffer8u:
         """
         Check whether the list is nonempty
         """
-    @typing.overload
     def __contains__(self, x: int) -> bool:
         """
         Return true the container contains ``x``
         """
-    @typing.overload
-    def __contains__(self, arg0: int) -> bool:
-        ...
     @typing.overload
     def __delitem__(self, arg0: int) -> None:
         """
@@ -1744,28 +1480,16 @@ class CLAPBuffer8u:
     @typing.overload
     def __init__(self, arg0: typing.Iterable) -> None:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
+    def __iter__(self) -> typing.Iterator[int]:
         ...
-    @typing.overload
-    def __iter__(self) -> typing.Iterator:
-        ...
-    @typing.overload
-    def __len__(self) -> int:
-        ...
-    @typing.overload
     def __len__(self) -> int:
         ...
     def __ne__(self, arg0: CLAPBuffer8u) -> bool:
         ...
-    @typing.overload
     def __repr__(self) -> str:
         """
         Return the canonical string representation of this list.
         """
-    @typing.overload
-    def __repr__(self) -> str:
-        ...
     @typing.overload
     def __setitem__(self, arg0: int, arg1: int) -> None:
         ...
@@ -1774,22 +1498,14 @@ class CLAPBuffer8u:
         """
         Assign list elements using a slice object
         """
-    @typing.overload
     def append(self, x: int) -> None:
         """
         Add an item to the end of the list
         """
-    @typing.overload
-    def append(self, arg0: int) -> None:
-        ...
-    @typing.overload
     def clear(self) -> None:
         """
         Clear the contents
         """
-    @typing.overload
-    def clear(self) -> None:
-        ...
     def count(self, x: int) -> int:
         """
         Return the number of times ``x`` appears in the list
@@ -1804,17 +1520,10 @@ class CLAPBuffer8u:
         """
         Extend the list by appending all the items in the given list
         """
-    @typing.overload
-    def extend(self, arg0: CLAPBuffer8u) -> None:
-        ...
-    @typing.overload
     def insert(self, i: int, x: int) -> None:
         """
         Insert an item at a given position.
         """
-    @typing.overload
-    def insert(self, arg0: int, arg1: int) -> None:
-        ...
     @typing.overload
     def pop(self) -> int:
         """
@@ -1825,17 +1534,10 @@ class CLAPBuffer8u:
         """
         Remove and return the item at index ``i``
         """
-    @typing.overload
-    def pop(self) -> int:
-        ...
-    @typing.overload
     def remove(self, x: int) -> None:
         """
         Remove the first item from the list whose value is x. It is an error if there is no such item.
         """
-    @typing.overload
-    def remove(self, arg0: int) -> None:
-        ...
     def resize(self, arg0: int) -> None:
         ...
     def size(self) -> int:
@@ -1955,6 +1657,10 @@ class HLSCore:
     def __init__(self, clap: CLAP, ctrlOffset: int, name: str) -> None:
         ...
 class Memory:
+    def GetBaseAddr(self) -> int:
+        ...
+    def GetSize(self) -> int:
+        ...
     def __repr__(self) -> str:
         ...
 class MemoryExp(Exception):
@@ -2061,7 +1767,7 @@ class VDMA:
         ...
     def __init__(self, clap: CLAP, ctrlOffset: int) -> None:
         ...
-__version__: str = '0.1.9'
+__version__: str = '0.1.14'
 
 from typing import Type, Union, Callable
 
