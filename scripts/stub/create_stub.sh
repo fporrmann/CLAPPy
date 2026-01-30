@@ -56,6 +56,7 @@ pybind11-stubgen --enum-class-locations=DMAChannel:CLAPPy.CLAPPy.CLAP \
 --enum-class-locations=DMAInterrupts:CLAPPy.CLAPPy.AxiDMA \
 --enum-class-locations=VDMAInterrupts:CLAPPy.CLAPPy.VDMA \
 --print-invalid-expressions-as-is \
+--ignore-invalid-expressions="std::function<.*>" \
 -o $CLAPPY_DIR \
 --stub-extension $FILE_EXT \
 CLAPPy.CLAPPy
@@ -90,7 +91,7 @@ sed -i 's/callback: std::function<void (unsigned int)>/callback: Callable[[int],
 # Replace callback: std::function<void (clap::AxiGPIO::Channel const&, unsigned int const&, bool const&)> with callback: Callable[[AxiGPIO.Channel, int, bool], None]
 sed -i 's/callback: std::function<void (clap::AxiGPIO::Channel const&, unsigned int const&, bool const&)>/callback: Callable[[AxiGPIO.Channel, int, bool], None]/g' "$OUTPUT_PATH"
 
-## At the end of the file, add the following:
+# At the end of the file, add the following:
 {
 	echo ""
 	echo "from typing import Type, Union, Callable"
@@ -124,6 +125,8 @@ sed -i 's/callback: std::function<void (clap::AxiGPIO::Channel const&, unsigned 
 } >> "$OUTPUT_PATH"
 
 # Update the __all__ = [] list to include the new types
-sed -i "s/\(__all__ = \[.*\)\]/\1, 'CLAPBufferInst', 'CLAPBufferType', 'CLAPCreateType']/" "$OUTPUT_PATH"
+sed -i -E "/__all__: list\[str\] = / {
+  /CLAPBufferInst/! s/(= \[[^]]*)\]/\1, 'CLAPBufferInst', 'CLAPBufferType', 'CLAPCreateType']/
+}" "$OUTPUT_PATH"
 
 echo "Done"

@@ -1,6 +1,6 @@
 from __future__ import annotations
 import typing
-__all__ = ['AxiDMA', 'AxiGPIO', 'AxiInterruptController', 'CLAP', 'CLAPBuffer16s', 'CLAPBuffer16u', 'CLAPBuffer32s', 'CLAPBuffer32u', 'CLAPBuffer64s', 'CLAPBuffer64u', 'CLAPBuffer8s', 'CLAPBuffer8u', 'ClapExp', 'HLSCore', 'Memory', 'MemoryExp', 'VDMA', 'CLAPBufferInst', 'CLAPBufferType', 'CLAPCreateType']
+__all__: list[str] = ['AxiDMA', 'AxiGPIO', 'AxiInterruptController', 'CLAP', 'CLAPBuffer16s', 'CLAPBuffer16u', 'CLAPBuffer32s', 'CLAPBuffer32u', 'CLAPBuffer64s', 'CLAPBuffer64u', 'CLAPBuffer8s', 'CLAPBuffer8u', 'ClapExp', 'HLSCore', 'Memory', 'MemoryExp', 'VDMA', 'CLAPBufferInst', 'CLAPBufferType', 'CLAPCreateType']
 class AxiDMA:
     class DMAInterrupts:
         """
